@@ -39,6 +39,6 @@ jobs:
         with:
          token: ${{ secrets.CODECOV_TOKEN }}
          slug: bharathram444/fluttrfly
-         fail-ci-if-error: true
+         fail_ci_if_error: true
          verbose: true
 
