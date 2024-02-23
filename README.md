@@ -1,5 +1,4 @@
-|>_|
----
+|>_| CLI
 
 # 📦 FluttrFly: Flutter Command-Line Tool 
 
@@ -84,7 +83,7 @@ You can find the detailed changelog for this project [Changelog](CHNAGELOG.md).
 ## 🌟 Contributing
 
 Contributions are always welcome!
-Learn how to contribute by visiting our GitHub repository: [fluttrfly](https://github.com/bharathram444/fclAssets.git) and [fluttrflyEnv]
+Learn how to contribute by visiting our GitHub repository: [fluttrfly](https://github.com/bharathram444/fluttrfly) and [fluttrflyEnv](https://github.com/bharathram444/fluttrflyEnv)
 
 
 ## ‍💻 Authors
@@ -93,7 +92,7 @@ Learn how to contribute by visiting our GitHub repository: [fluttrfly](https://g
 
 
 ## 🧾 License
-This project is licensed under the MIT License - see the [LICENSE]() file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/bharathram444/fluttrfly/blob/main/LICENSE) file for details.
 
 
 
