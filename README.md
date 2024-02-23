@@ -1,4 +1,3 @@
-|>_| CLI
 
 # 📦 FluttrFly: Flutter Command-Line Tool 
 
