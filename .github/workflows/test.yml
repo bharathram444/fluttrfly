@@ -34,11 +34,11 @@ jobs:
       - name: Run tests with coverage
         run: make test-cov
 
-      # Upload coverage report
-      - name: Upload coverage report (optional)
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail-ci-if-error: true
-          verbose: true
+         token: ${{ secrets.CODECOV_TOKEN }}
+         slug: bharathram444/fluttrfly
+         fail-ci-if-error: true
+         verbose: true
 
