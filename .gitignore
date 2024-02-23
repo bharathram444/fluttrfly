@@ -1,0 +1,59 @@
+# General build and virtual environment files
+__pycache__/
+.pytest_cache/
+.venv/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# IDE/editor-specific configuration files
+.idea/
+.vscode/
+.vimrc
+.emacs
+.sublime-project
+
+# Platform-specific files (Windows, macOS, Linux)
+Thumbs.db
+DS_Store
+
+# Operating system temp files
+*.tmp
+*.log
+*.pid
+
+# Test output and coverage reports
+*.pyc
+.coverage
+coverage_report.xml
+htmlcov/
+
+# Personal configuration files (credentials, API keys)
+*.key
+*.secret
+*.env
+*.cfg
+
+# Large or unnecessary data files
+data/
+
+# Locally generated documentation
+docs/_build/
+
+# PyPI packaging artifacts
+*.whl
+*.egg
+
+# Exclude specific files/directories if needed (review carefully!)
+!README.md
+!LICENSE
+!requirements.txt
+!poetry.lock
+!pyproject.toml
+!CHANGELOG.md
+!tests/
+!README.md
+
+# Specific files from your list
+.vscode/settings.json

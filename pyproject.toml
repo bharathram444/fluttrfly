@@ -1,0 +1,62 @@
+[tool.poetry]
+name = "fluttrfly"
+version = "1.0.0"
+description = "a versatile CLI tool that automates the creation of essential project structures."
+authors = ["Bharath ram <bharathram123@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+
+[tool.poetry.scripts]
+fluttrfly = "fluttrfly.bin.entry:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+rich = "^13.7.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0.1"
+pytest-mock = "^3.12.0"
+
+
+[tool.poetry.group.code-quality.dependencies]
+black = "^24.2.0"
+ruff = "^0.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+[tool.black]
+line-length = 99
+skip-string-normalization = true
+
+[tool.ruff]
+lint.select = ["E", "F", "I"]
+show-fixes = true
+lint.ignore = ["E501"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations"
+]
+line-length = 99
