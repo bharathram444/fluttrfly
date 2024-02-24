@@ -11,7 +11,7 @@ readme = "README.md"
 fluttrfly = "fluttrfly.bin.entry:main"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 rich = "^13.7.0"
 
 [tool.poetry.group.test.dependencies]

@@ -7,14 +7,14 @@ on:
 
 jobs:
   build:
-    name: Build (Python ${{ matrix.python-version }}, Os ${{matrix.os}})
+    name: Build (Python ${{ matrix.python-version }},Poetry ${{matrix.poetry-version}} Os ${{matrix.os}})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       max-parallel: 5
       matrix: 
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
         poetry-version: ["1.2.2", "1.7.1"]
     steps:
       - uses: actions/checkout@v4
