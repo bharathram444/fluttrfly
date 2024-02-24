@@ -1,4 +1,5 @@
-
+[![Test](https://github.com/bharathram444/fluttrfly/actions/workflows/test.yml/badge.svg)](https://github.com/bharathram444/fluttrfly/actions/workflows/test.yml)
+[![Coverage](https://codecov.io/gh/bharathram444/fluttrfly/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bharathram444/fluttrfly)
 # 📦 FluttrFly: Flutter Command-Line Tool 
 
 
