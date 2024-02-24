@@ -35,7 +35,6 @@ jobs:
 
       # Tests with coverage
       - name: Run tests with coverage
-        if: github.event.name == 'push' && github.base_branch == 'main'
         run: make test-cov
 
       - name: Upload coverage reports to Codecov
