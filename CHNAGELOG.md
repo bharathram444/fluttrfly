@@ -7,12 +7,13 @@ All notable changes to this project will be documented in this file. The format 
 #### Added
 
 - New feature or command (e.g., `fluttrfly add`) for adding widgets and utilities to the core.
-- ...
 
 ### Version 1.0.0 (2024-02-24)
 
 #### Added
 
-- Initial release of FluttrFly CLI.
-- Basic commands for project setup (`fluttrfly build`, `fluttrfly env`).
-- ...
+- **Initial Release:**
+  - FluttrFly CLI is officially launched, providing a streamlined Flutter development workflow.
+  - Introduces essential commands for project setup, including:
+    - `fluttrfly build`: Generates various project structures.
+    - `fluttrfly env`: Manages the FluttrFly development environment.
