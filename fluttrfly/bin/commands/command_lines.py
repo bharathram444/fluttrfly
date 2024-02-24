@@ -44,16 +44,16 @@ def main():
 
     ## Argparse Initialization @
     # Main parser
-    examples = """
-   Examples:
-     fluttrfly env                 # Create the environment interactively.
-     fluttrfly build module        # Build a new Flutter module.
-     fluttrfly build assets        # Build the project assets structure.
-     fluttrfly build core          # Build the core.
-   """
+#     examples = """
+#    Examples:
+#      fluttrfly env                 # Create the environment interactively.
+#      fluttrfly build module        # Build a new Flutter module.
+#      fluttrfly build assets        # Build the project assets structure.
+#      fluttrfly build core          # Build the core.
+#    """
     parser = argparse.ArgumentParser(
         description="CLI to streamline the development process for Flutter projects.",
-        epilog=examples,
+        epilog="Say goodbye to repetitive setup tasks and focus on your coding magic!",
     )
 
     # Sub parser
