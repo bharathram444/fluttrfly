@@ -16,6 +16,10 @@ current_directory = Path.cwd()
 fluttrfly_version = metadata.version("fluttrfly")
 console = Console()
 
+# consts
+
+libString = "/lib"
+
 # Define styles for messages
 error_style = Style(color="red", bold=True)
 success_style = Style(color="green", bold=True)
@@ -92,6 +96,7 @@ branch_colors = {
 # │   ├── bin
 # │   │   ├── commands
 # │   │   │   ├── command_lines.py
+# │   │   │   ├── command_manager.py
 # │   │   │   └── __init__.py
 # │   │   ├── entry.py
 # │   │   ├── functions
@@ -131,4 +136,4 @@ branch_colors = {
 #     ├── test_env_functions.py
 #     └── test_json_functions.py
 
-# 13 directories, 32 files
+# 13 directories, 33 files

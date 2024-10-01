@@ -8,7 +8,7 @@ from pathlib import Path
 from rich.tree import Tree
 
 # Imports
-from ..variables.global_variables import (
+from ..commands.global_variables import (
     branch_colors,
     config_path,
     console,

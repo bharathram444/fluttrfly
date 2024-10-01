@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Imports
-from ..variables.global_variables import (
+from ..commands.global_variables import (
     config_path,
     console,
     error_style,
@@ -206,7 +206,7 @@ def set_env_path():
         console.print(
             "[bold cyan]4.[/bold cyan] [italic]Paste the path below when prompted.[/italic]"
         )
-        repo_dir = input("Enter the path to the fluttrflyenv folder: ")
+        repo_dir = input("Enter the path to the fluttrfly env folder: ")
         real_repo_dir = check_path_exists(path=repo_dir, silence=False, force_off=True)
         if real_repo_dir:
             result = paths_check_up(repo_dir)

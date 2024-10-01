@@ -1,6 +1,12 @@
 {
-    "repo_dir": "",
-    "environment_setup_done": false,
+    "repo_dir": "/home/bharath/fluttrflyEnv",
+    "env": "/home/bharath/fluttrflyEnv/env",
+    "assets": "/home/bharath/fluttrflyEnv/env/assets",
+    "core": "/home/bharath/fluttrflyEnv/env/assets/flutter_things/lib/core",
+    "fonts": "/home/bharath/fluttrflyEnv/env/assets/fonts",
+    "templates": "/home/bharath/fluttrflyEnv/env/assets/templates",
+    "messages": "/home/bharath/fluttrflyEnv/env/messages",
+    "environment_setup_done": true,
     "env_version": "1.0.0",
     "repo_url": "https://github.com/bharathram444/fluttrflyEnv.git"
 }

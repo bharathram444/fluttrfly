@@ -7,7 +7,7 @@ from pathlib import Path
 
 # Imports
 from ..functions.json_functions import check_path_exists
-from ..variables.global_variables import (
+from ..commands.global_variables import (
     console,
     error_style,
     fluttrfly_version,
