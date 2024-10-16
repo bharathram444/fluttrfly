@@ -61,7 +61,11 @@ def load(config_path):
             config_data.get("repo_url", "https://github.com/bharathram444/fluttrflyEnv.git"),
             config_data.get("environment_setup_done", False),
             config_data.get("repo_dir", ""),
-            config_data.get("env_version", "1.0.0"),
+            # DON'T change this, here and json, first marge dev with main and
+            # change this to "2.0.0" and create tag and proceed...
+            config_data.get(
+                "env_version", "dev"
+            ),  # here we have to keep 2.0.0 now i am keeping "dev"
             config_data.get("messages", ""),
         )
     return "https://github.com/bharathram444/fluttrflyEnv.git", False, "", "", ""
@@ -73,13 +77,15 @@ def all_paths_get(config_path):
     if path_data:
         return (
             path_data.get("repo_dir", ""),
-            path_data.get("environment", ""),
+            path_data.get("env", ""),
             path_data.get("assets", ""),
-            path_data.get("core", ""),
+            path_data.get("bloc_setup", ""),
+            path_data.get("riverpod_setup", ""),
             path_data.get("fonts", ""),
             path_data.get("templates", ""),
+            path_data.get("messages", ""),
         )
-    return "", "", "", "", "", ""
+    return "", "", "", "", "", "", "", ""
 
 
 def check_path_exists(path, silence, force_off):
@@ -102,9 +108,20 @@ def check_path_exists(path, silence, force_off):
 
 @handle_exception
 def check_paths_in_config(config_path):
-    repo_dir, environment, assets, core, fonts, templates = all_paths_get(config_path)
+    repo_dir, env, assets, bloc_setup, riverpod_setup, fonts, templates, messages = all_paths_get(
+        config_path
+    )
 
-    paths_to_check = [repo_dir, environment, assets, core, fonts, templates]
+    paths_to_check = [
+        repo_dir,
+        env,
+        assets,
+        bloc_setup,
+        riverpod_setup,
+        fonts,
+        templates,
+        messages,
+    ]
 
     for path in paths_to_check:
         result = check_path_exists(path, silence=False, force_off=False)
@@ -122,13 +139,14 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
                 data={
                     "repo_dir": "",
                     "environment_setup_done": False,
-                    "env_version": "1.0.0",
+                    # DON'T change this, here and json, first marge dev with main and
+                    # change this to "2.0.0" and create tag and proceed...
+                    "env_version": "dev",  # here we have to keep 2.0.0 now i am keeping "dev"
                     "repo_url": "https://github.com/bharathram444/fclAssets.git",
                 },
             )
             console.print(
-                f"[{error_style}]📛 Error setting up the environment. Please try again. 📛",
-                style=error_style,
+                f"[{error_style}]📛 Error setting up the environment. Please try again. 📛"
             )
             sys.exit(1)
 
@@ -138,7 +156,8 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
             "repo_dir": str(main_repo_dir),
             "env": str(main_repo_dir) + "/env",
             "assets": str(main_repo_dir) + "/env/assets",
-            "core": str(main_repo_dir) + "/env/assets/flutter_things/lib/core",
+            "bloc_setup": str(main_repo_dir) + "/env/assets/flutter_assets/bloc_setup",
+            "riverpod_setup": str(main_repo_dir) + "/env/assets/flutter_assets/riverpod_setup",
             "fonts": str(main_repo_dir) + "/env/assets/fonts",
             "templates": str(main_repo_dir) + "/env/assets/templates",
             "messages": str(main_repo_dir) + "/env/messages",
@@ -150,43 +169,32 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
 
     if main_repo_dir is not None:
         # Additional messages
+        console.print(f"[{success_style}]✅ Environment set up successfully! ✨")
         console.print(
-            f"[{success_style}]✅ Environment set up successfully! ✨", style=success_style
+            f"[{info_style}]ℹ️  The environment (v{env_version}) has been set up and linked to fluttrfly v{fluttrfly_version}. ℹ️"
         )
-        console.print(
-            f"[{info_style}]ℹ️  The environment (v{env_version}) has been set up and linked to fluttrfly v{fluttrfly_version}. ℹ️",
-            style=info_style,
-        )
-        console.print(
-            f"[{info_style}]✨ Paths linked to fluttrfly from the environment: ✨",
-            style=info_style,
-        )
+        console.print(f"[{info_style}]✨ Paths linked to fluttrfly from the environment: ✨")
         console.print(f"   • Repo Directory: {str(main_repo_dir)}")
         console.print(f"   • Environment : {str(main_repo_dir)}/env")
         console.print(f"   • Assets: {str(main_repo_dir)}/env/assets")
-        console.print(f"   • Core: {str(main_repo_dir)}/env/assets/flutter_things/lib/core")
+        console.print(f"   • Flutter Assets: {str(main_repo_dir)}/env/assets/flutter_assets")
         console.print(f"   • Fonts: {str(main_repo_dir)}/env/assets/fonts")
         console.print(f"   • Templates: {str(main_repo_dir)}/env/assets/templates")
         console.print(f"   • messages: {str(main_repo_dir)}/env/messages")
         console.print(
-            f"[{warning_style}]🚨  Important: Do not modify the structure of the environment or move it! 🚨",
-            style=warning_style,
+            f"[{warning_style}]🚨  Important: Do not modify the structure of the environment or move it! 🚨"
         )
         console.print(
-            f"[{warning_style}]🚨  Avoid moving or deleting folders within the environment. 🚨",
-            style=warning_style,
+            f"[{warning_style}]🚨  Avoid moving or deleting folders within the environment. 🚨"
         )
         console.print(
-            f"[{warning_style}]🚨  Avoid changing branches manually within the environment. 🚨",
-            style=warning_style,
+            f"[{warning_style}]🚨  Avoid changing branches manually within the environment. 🚨"
         )
         console.print(
-            f"[{warning_style}]🚨  Any unauthorized changes may lead to fluttrfly malfunction. 🚨",
-            style=warning_style,
+            f"[{warning_style}]🚨  Any unauthorized changes may lead to fluttrfly malfunction. 🚨"
         )
         console.print(
-            f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨",
-            style=info_style,
+            f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨"
         )
 
 
@@ -230,7 +238,16 @@ def paths_check_up(repo_dir):
     paths = [
         f"{str(repo_dir)}/env",
         f"{str(repo_dir)}/env/assets",
-        f"{str(repo_dir)}/env/assets/flutter_things/lib/core",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/assets",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/lib",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/packages",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/fluttrfly",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/assets",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/lib",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/packages",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/fluttrfly",
         f"{str(repo_dir)}/env/assets/fonts",
         f"{str(repo_dir)}/env/assets/templates",
         f"{str(repo_dir)}/env/messages/",

@@ -5,12 +5,12 @@ from unittest.mock import patch
 import pytest
 
 # Assuming the code is part of a package named 'your_package'
+from fluttrfly.bin.functions.common_functions import is_internet_available
 from fluttrfly.bin.functions.env_functions import (
     check_for_updates,
     clone_repo_at_home,
     clone_repo_at_user_chosen_location,
     get_current_branch,
-    is_internet_available,
 )
 
 

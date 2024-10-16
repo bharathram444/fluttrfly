@@ -22,7 +22,7 @@ class CommandsManager:
             envCommand.env_update_tag()
         if force:
             envCommand.env_force_tag()
-        if len(sys.argv) == 2:
+        if not version and not reset and not update and not force:
             envCommand.env_no_tags()
 
     def handle_build(self, module, assets, core):
@@ -34,12 +34,11 @@ class CommandsManager:
             buildCommand.build_assets_tag()
         if core:
             buildCommand.build_core_tag()
-        if len(sys.argv) == 2:
+        if not module and not assets and not core:
             buildCommand.build_no_tags()
 
     def handle_setup(self, riverpod, bloc):
         """Handle the setup of Flutter projects using either Riverpod or Bloc."""
-
         setupCommand = SetupCommand()
         if riverpod and bloc:
             setupCommand.usedBoth()
@@ -47,3 +46,5 @@ class CommandsManager:
             setupCommand.setup_riverpod()
         if bloc:
             setupCommand.setup_bloc()
+        if not riverpod and not bloc:
+            setupCommand.setup_no_tags()

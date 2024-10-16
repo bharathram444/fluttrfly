@@ -14,6 +14,7 @@ fluttrfly = "fluttrfly.bin.entry:cli"
 python = "^3.9"
 rich = "^13.7.0"
 click = "^8.1.7"
+pyyaml = "^6.0.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.0.1"

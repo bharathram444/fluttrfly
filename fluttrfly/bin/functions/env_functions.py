@@ -1,11 +1,11 @@
 # env_functions.py
 
-import socket
 import subprocess
 import sys
 from pathlib import Path
 
 # Imports
+from ..functions.common_functions import is_internet_available
 from ..functions.json_functions import check_path_exists
 from ..commands.global_variables import (
     console,
@@ -16,20 +16,6 @@ from ..commands.global_variables import (
     warning_style,
 )
 
-## Internet check @
-
-
-def is_internet_available(host="8.8.8.8", port=53, timeout=5):
-    try:
-        # Try creating a socket connection to the specified host and port
-        socket.create_connection((host, port), timeout=timeout)
-        return True
-    except OSError:
-        console.print(
-            f"[{error_style}]📛 No internet connection. Please check your connection and try again. 😟"
-        )
-        return False
-
 
 ## fluttrfly version updates @
 def fluttrfly_version_updates(messages):
@@ -38,13 +24,13 @@ def fluttrfly_version_updates(messages):
         with message_path.open("r") as message_file:
             message = message_file.read().strip()
             if message:
-                console.print(f"[{info_style}]ℹ️ {message} ℹ️", style=info_style)
+                console.print(f"[{info_style}]ℹ️ {message} ℹ️")
             else:
                 print("")
     except FileNotFoundError:
-        console.print(f"[{info_style}]📛 Message file not found ℹ️", style=info_style)
+        console.print(f"[{info_style}]📛 Message file not found ℹ️")
     except Exception as e:
-        console.print(f"[{info_style}]📛 Error reading message file: {e} ℹ️", style=info_style)
+        console.print(f"[{info_style}]📛 Error reading message file: {e} ℹ️")
 
 
 ## env functions @
@@ -90,8 +76,7 @@ def clone_repo_at_user_chosen_location(repo_url):
             return repo_dir
         else:
             console.print(
-                "[{warning_style}]🚨 Exiting, the provided path is empty. Please provide a valid path. ✨",
-                style=warning_style,
+                f"[{warning_style}]🚨 Exiting, the provided path is empty. Please provide a valid path. ✨"
             )
             return None
     except subprocess.CalledProcessError as error:
@@ -145,8 +130,7 @@ def check_for_updates(repo_dir, branch):
         if f"Your branch is behind 'origin/{branch}'" in output.decode():
             console.print(f"[{warning_style}]🚨 Updates available for env {branch} ✨")
             console.print(
-                f"[{info_style}]🛠️  The environment is already set up. You can update it using 'fluttrfly env --update'. 🛠️",
-                style=info_style,
+                f"[{info_style}]🛠️  The environment is already set up. You can update it using 'fluttrfly env --update'. 🛠️"
             )
             return True
         else:
@@ -201,14 +185,11 @@ def environment_setup(repo_url):
         if choice_location.lower() == 'y':
             repo_dir = clone_repo_at_user_chosen_location(repo_url=repo_url)
         elif choice_location.lower() == 'n':
-            console.print(
-                "[{warning_style}]🚨 Exiting. Please choose a setup option. ✨",
-                style=warning_style,
-            )
+            console.print(f"[{warning_style}]🚨 Exiting. Please choose a setup option. ✨")
         else:
-            console.print("[{error_style}]📛 Invalid choice. Exiting. 😟", style=error_style)
+            console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
     else:
-        console.print("[{error_style}]📛 Invalid choice. Exiting. 😟", style=error_style)
+        console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
 
     return repo_dir
 
@@ -223,8 +204,7 @@ def update_and_pull_changes(repo_dir, branch):
         if check:
             pull_commits(repo_dir=repo_dir, branch_name=branch)
             console.print(
-                f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{current_env_branch}! ✨",
-                style=info_style,
+                f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{current_env_branch}! ✨"
             )
 
 
@@ -241,13 +221,11 @@ def env_check_up(repo_dir, env_version, silence):
         if env_version == current_env_branch:
             if not silence:
                 console.print(
-                    f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨",
-                    style=info_style,
+                    f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨"
                 )
         if env_version != current_env_branch:
             console.print(
-                f"[{info_style}]ℹ️  The env (v{current_env_branch}) != fluttrfly v{fluttrfly_version}. ℹ️",
-                style=info_style,
+                f"[{info_style}]ℹ️  The env (v{current_env_branch}) != fluttrfly v{fluttrfly_version}. ℹ️"
             )
             console.print(
                 f"[{error_style}]📛 You have to reset env using 'fluttrfly env --reset' 😟"

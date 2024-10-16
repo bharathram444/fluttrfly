@@ -1,9 +1,306 @@
 # setup_functions.py
 
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+import xml.etree.ElementTree as ET
+import plistlib
+import yaml
 
-def setup_riverpod_structure():
-    print("setup_riverpod_structure")
+
+from ..functions.common_functions import read_yaml, write_yaml
+from ..functions.json_functions import read_config
+
+from ..commands.global_variables import (
+    console,
+    error_style,
+    info_style,
+    success_style,
+    warning_style,
+    config_path,
+    fluttrfly_version
+)
 
 
-def setup_bloc_structure():
-    print("setup_bloc_structure")
+def _get_setup_path(state_management):
+    """Retrieve the setup path from the configuration file based on the state management type."""
+    # Read the configuration data
+    config_data = read_config(config_path)
+
+    # Determine the key based on the state management type
+    key = "riverpod_setup" if state_management == "riverpod" else "bloc_setup"
+
+    # Initialize setup_path to an empty Path
+    setup_path = Path("")
+
+    # Check if config_data exists and get the setup path
+    if config_data:
+        setup_path = Path(config_data.get(key, ""))
+
+    return setup_path
+
+
+def _select_platforms():
+    """Allow the user to select platforms via a checkbox-like interface."""
+    platforms = ["android", "ios", "linux", "macos", "web", "windows"]
+    selected_platforms = []
+    console.print(f"[{info_style}]ℹ️ Select platforms for your project:")
+    for i, platform in enumerate(platforms, 1):
+        user_input = input(f"{i}. {platform}? (y/n): ")
+        if user_input.lower() == "y":
+            selected_platforms.append(platform)
+    if not selected_platforms:
+        console.print(
+            f"[{warning_style}]🚨 No platforms selected. Defaulting to 'android,ios'. 🚨"
+        )
+        return "android,ios"
+    return ",".join(selected_platforms)
+
+
+def create_app():
+    """Create a new Flutter app with user-defined organization name, app name, and platforms."""
+    # Step 1: Collect user inputs for organization, app name, and platforms
+    org_name = input("Enter the organization name (e.g., com.example): ").strip()
+    app_name = input("Enter the app name: ").strip()
+    # Validate input
+    if not org_name or not app_name:
+        console.print(f"[{error_style}]📛 Organization name and app name cannot be empty!")
+        sys.exit(1)
+    platforms = _select_platforms()
+    # Step 2: Run 'flutter create' command with user inputs
+    flutter_create_cmd = f"flutter create --org {org_name} --platforms {platforms} {app_name}"
+    try:
+        subprocess.run(flutter_create_cmd, shell=True, check=True)
+        console.print(f"[{success_style}]✅ Flutter project created successfully! ✨")
+        # Step 3: Change directory to the newly created app
+        os.chdir(app_name)
+        return os.getcwd(), org_name, app_name, platforms
+    except subprocess.CalledProcessError:
+        console.print(f"[{error_style}]📛 Failed to create Flutter project. 😟")
+        sys.exit(1)
+        return None
+
+
+def add_folders(state_management, app_path):
+    """Add assets,lib,packages folders in user app."""
+    # Step 4: Add assets,lib,packages,test in user app
+    setup_path = _get_setup_path(state_management)
+    app_path_x = Path(app_path)
+    assets_path = setup_path / "assets"
+    lib_path = setup_path / "lib"
+    packages_path = setup_path / "packages"
+    test_path = setup_path / "test"
+    shutil.copytree(assets_path, app_path_x / "assets", dirs_exist_ok=True)
+    shutil.copytree(lib_path, app_path_x / "lib", dirs_exist_ok=True)
+    shutil.copytree(packages_path, app_path_x / "packages", dirs_exist_ok=True)
+    shutil.copytree(test_path, app_path_x / "test", dirs_exist_ok=True)
+    console.print(f"[{success_style}]✅ assets, lib, packages, test added successfully! ✨")
+
+
+def update_pubspec_yaml(file_path):
+    """Update pubspec.yaml by adding specific keys and values."""
+    # Step 5: Update pubspec.yaml.
+    # 0. Read the existing YAML data
+    data = read_yaml(file_path)
+
+    # 1. Add 'fluttrfly' under the root
+    data['dependencies']['fluttrfly'] = {'path': 'packages/fluttrfly'}
+
+    # 2. Add 'assets' under 'flutter'
+    if 'flutter' not in data:
+        data['flutter'] = {}
+    data['flutter']['assets'] = ['assets/', 'assets/logo/']
+
+    # 3. Add 'flutter_launcher_icons' under the root
+    data['flutter_launcher_icons'] = {
+        'android': 'ic_launcher',
+        'image_path': 'assets/logo/logo.png',
+        'ios': False,
+        'min_sdk_android': 21,
+        'macos': {'generate': True, 'image_path': 'assets/logo/logo.png'},
+    }
+
+    # Write the updated YAML data back to the pubspec.yaml
+    write_yaml(file_path, data)
+    console.print(f"[{success_style}]✅ pubspec.yaml has been updated successfully! ✨")
+
+
+def update_local_keys(local_keys_path, org_name, app_name):
+    """Update local_keys.dart by adding specific keys and values."""
+    # Step 6: Update local_keys.dart.
+    # 0. Created Path and check exists
+    local_keys_path_x = Path(local_keys_path)
+    if not local_keys_path_x.exists():
+        console.print(f"[{warning_style}]🚨 local_keys.dart not found. 🚨"),
+    # 1. Read local keys file
+    with (local_keys_path_x).open("r") as template_file:
+        component_temp = template_file.read()
+    # 2. Modify the content
+    component_temp = component_temp.replace(
+        "in.easycloud.axiom_services", f"{org_name}.{app_name}"
+    )
+    # 3. Write to a new file
+    with (local_keys_path_x).open("w") as new_file:
+        new_file.write(component_temp)
+    console.print(f"[{success_style}]✅ local_keys.dart has been updated successfully! ✨")
+
+
+def update_android_manifest(manifest_path):
+    """Adds location permissions to the AndroidManifest.xml file."""
+
+    # Step 1: Parse the AndroidManifest.xml file
+    tree = ET.parse(manifest_path)
+    root = tree.getroot()
+
+    # Step 2: Register the 'android' namespace
+    ET.register_namespace('android', 'http://schemas.android.com/apk/res/android')
+
+    # Step 3: Create <uses-permission> elements for location permissions
+    fine_location_permission = ET.Element("uses-permission")
+    fine_location_permission.set(
+        "{http://schemas.android.com/apk/res/android}name",
+        "android.permission.ACCESS_FINE_LOCATION",
+    )
+
+    coarse_location_permission = ET.Element("uses-permission")
+    coarse_location_permission.set(
+        "{http://schemas.android.com/apk/res/android}name",
+        "android.permission.ACCESS_COARSE_LOCATION",
+    )
+
+    # Step 4: Insert the permissions below the <manifest> tag
+    root.insert(1, fine_location_permission)  # Insert fine location permission
+    root.insert(2, coarse_location_permission)  # Insert coarse location permission
+
+    # Step 5: Write the updated file back to AndroidManifest.xml
+    tree.write(manifest_path, encoding="utf-8", xml_declaration=True)
+
+    console.print(f"[{success_style}]✅ AndroidManifest.xml updated successfully! ✨")
+
+
+def update_info_plist(plist_path):
+    """Add location usage descriptions to iOS Info.plist."""
+
+    # Step 1: Read the existing Info.plist file
+    with open(plist_path, 'rb') as plist_file:
+        plist_data = plistlib.load(plist_file)
+
+    # Step 2: Add location permission keys to the dict
+    plist_data['NSLocationWhenInUseUsageDescription'] = (
+        "This app needs access to location when open."
+    )
+    plist_data['NSLocationAlwaysUsageDescription'] = (
+        "This app needs access to location when in the background."
+    )
+
+    # Step 3: Write the updated plist back to the file
+    with open(plist_path, 'wb') as plist_file:
+        plistlib.dump(plist_data, plist_file)
+
+    console.print(f"[{success_style}]✅ Info.plist updated successfully! ✨")
+
+
+def update_dependencies(state_management):
+    """
+    Updates Flutter dependencies in the pubspec.yaml file and installs them using flutter pub add.
+    """
+    # Path of the env pubspec.yaml file
+    setup_path = _get_setup_path(state_management)
+    pubspec_env_path = setup_path / "pubspec.yaml"
+    # Load the pubspec.yaml file
+    with open(pubspec_env_path, 'r') as file:
+        pubspec = yaml.safe_load(file)
+    # Extract dependencies and dev_dependencies
+    dependencies = pubspec.get('dependencies', {})
+    dev_dependencies = pubspec.get('dev_dependencies', {})
+    # Filter out flutter and fluttrfly from dependencies
+    runtime_deps = [
+        k for k in dependencies if k not in ['flutter', 'fluttrfly', 'cupertino_icons']
+    ]
+    # Filter out flutter_test from dev_dependencies
+    dev_deps = [k for k in dev_dependencies if k not in ['flutter_test', 'flutter_lints']]
+    # Add runtime dependencies using 'flutter pub add'
+    if runtime_deps:
+        runtime_cmd = ['flutter', 'pub', 'add'] + runtime_deps
+        subprocess.run(runtime_cmd, check=True)
+
+    # Add dev dependencies using 'flutter pub add -d'
+    if dev_deps:
+        dev_cmd = ['flutter', 'pub', 'add', '-d'] + dev_deps
+        subprocess.run(dev_cmd, check=True)
+    console.print(f"[{success_style}]✅ Dependencies updated successfully! ✨")
+
+
+def run_flutter_commands(app_path):
+    """
+    Run Flutter commands in the user app and in the packages/fluttrfly package.
+    """
+    # Define the commands to run
+    commands = [
+        "flutter clean",
+        "flutter pub get",
+        "flutter pub run build_runner build --delete-conflicting-outputs",
+    ]
+    app_path_x = Path(app_path)
+    # Run commands in the user app directory
+    console.print(f"[{success_style}]✅ Running Flutter commands in the user app... ✨")
+    for command in commands:
+        try:
+            subprocess.run(command, shell=True, check=True, cwd=app_path_x)
+            console.print(f"[{success_style}]✅ Executed: {command} ✨")
+        except subprocess.CalledProcessError as e:
+            console.print(f"[{error_style}]📛 Error while executing command '{command}': {e}")
+
+    # Run commands in the packages/fluttrfly directory
+    console.print(f"[{success_style}]✅ Running Flutter commands in the packages/fluttrfly... ✨")
+    fluttrfly_path = app_path_x / "packages/fluttrfly"
+    for command in commands:
+        try:
+            subprocess.run(command, shell=True, check=True, cwd=fluttrfly_path)
+            console.print(f"[{success_style}]✅ Executed: {command} ✨")
+        except subprocess.CalledProcessError as e:
+            console.print(f"[{error_style}]📛 Error while executing command '{command}': {e}")
+    console.print(f"[{success_style}]✅ Flutter commands executed successfully! ✨")
+
+
+def create_fluttrflyrc(app_path):
+    """
+    Create a .fluttrflyrc file in the user app directory with specified data.
+    """
+    # Define the data to be stored in the .fluttrflyrc file
+    fluttrfly_data = {"state_management": "r", "fluttrfly_version": fluttrfly_version}
+    app_path_x = Path(app_path)
+
+    # Define the path to the .fluttrflyrc file
+    fluttrflyrc_path = app_path_x / ".fluttrflyrc"
+
+    # Write the data to the .fluttrflyrc file
+    try:
+        with open(fluttrflyrc_path, 'w') as fluttrflyrc_file:
+            json.dump(fluttrfly_data, fluttrflyrc_file, indent=4)
+        console.print(f"[{success_style}]✅ Created .fluttrflyrc file at: {fluttrflyrc_path}")
+    except Exception as e:
+        console.print(f"[{error_style}]📛Error while creating .fluttrflyrc file: {e}")
+
+
+def show_setup_command_lines():
+    # Main title with bold green foreground and yellow background
+    title = "[bold green] 👨‍💻 Welcome to the Flutter command line tool (fluttrfly[FLY]) 🙂 ![/bold green]"
+    console.print(title)
+    # Command prompt with bold foreground and italic yellow underline
+    command_prompt = "[bold]Choose a command to help you with your flutter project :[/bold]"
+    console.print(command_prompt)
+    # Commands with bold styles and different colors
+    commands = [
+        "[bold magenta]fluttrfly setup --riverpod[/bold magenta]  - Set up the riverpod project",
+        "[bold cyan]fluttrfly setup --bloc[/bold cyan]  - Set up the bloc project",
+        "[bold dodger_blue2]fluttrfly setup --help[/bold dodger_blue2]  - For more info",
+    ]
+    for command in commands:
+        console.print(command)
+    # Future features with bold and italic styles
+    future_features = "[bold yellow]More features coming soon![/bold yellow] [italic]([italic red]ETA: 2 seconds[/italic red])[italic]"
+    console.print(future_features)

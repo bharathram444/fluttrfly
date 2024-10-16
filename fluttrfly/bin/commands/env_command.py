@@ -21,7 +21,6 @@ from ..commands.global_variables import (
     config_path,
     console,
     error_style,
-    fluttrfly_version,
     warning_style,
 )
 
@@ -61,7 +60,7 @@ class EnvCommand:
     def env_reset_tag(self):
         path_exists = check_path_exists(path=self.repo_dir, silence=False, force_off=False)
         if path_exists:
-            check_out_branch(repo_dir=self.repo_dir, branch_name=fluttrfly_version)
+            check_out_branch(repo_dir=self.repo_dir, branch_name=self.env_version)
 
     def env_update_tag(self):
         check = check_path_exists(path=self.repo_dir, silence=False, force_off=False)
@@ -80,8 +79,7 @@ class EnvCommand:
                 present_repo_dir = set_env_path()
                 if present_repo_dir is None:
                     console.print(
-                        f"[{error_style}]📛 Use 'fluttrfly env --force' to create the environment. 😟",
-                        style=error_style,
+                        f"[{error_style}]📛 Use 'fluttrfly env --force' to create the environment. 😟"
                     )
                     exit(1)
                 check_out = check_out_branch(
@@ -96,7 +94,7 @@ class EnvCommand:
             elif choice_home.lower() == 'n':
                 self.prompt_for_recreation()
             else:
-                console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟", style=error_style)
+                console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
 
     def prompt_for_recreation(self):
         """Prompt the user to recreate the fluttrfly environment if it already exists."""
@@ -117,9 +115,6 @@ class EnvCommand:
                 repo_url=self.repo_url,
             )
         elif choice_location.lower() == 'n':
-            console.print(
-                f"[{warning_style}]🚨 Exiting. Please choose an option. ✨",
-                style=warning_style,
-            )
+            console.print(f"[{warning_style}]🚨 Exiting. Please choose an option. ✨")
         else:
-            console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟", style=error_style)
+            console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")

@@ -7,35 +7,20 @@ from pathlib import Path
 
 from rich.tree import Tree
 
+from ..functions.common_functions import with_loading
+
+from ..functions.setup_functions import update_dependencies
+
 # Imports
 from ..commands.global_variables import (
     branch_colors,
     config_path,
     console,
     current_directory,
-    error_style,
     success_style,
+    warning_style,
 )
 from .json_functions import read_config
-
-
-# loading animation
-def with_loading(task, duration=1):
-    with console.status("[bold green]Creating..."):
-        try:
-            time.sleep(duration)
-            task()
-        except (FileNotFoundError, IsADirectoryError) as e:
-            console.print(f"[{error_style}]📛 Error: {e} 😟")
-            console.print(
-                f"[{error_style}]📛 The configuration file is missing or the specified path is a directory. 😟"
-            )
-            console.print(
-                f"[{error_style}]📛 Use 'fluttrfly env --force' to create the environment. 😟"
-            )
-            return None
-        except Exception as e:
-            console.print(f"An error occurred: {e}", style="bold red")
 
 
 ## Tree Functions @
@@ -70,7 +55,6 @@ def module_tree(module_name: str):
 
 def assets_tree():
     tree = Tree("[bold gold1]assets[/bold gold1]")
-
     fonts_node = tree.add("[bold green]fonts[/bold green]")
     fonts_node.add("[blue]Raleway-Regular.ttf[/blue]")
     fonts_node.add("[blue]Roboto-Bold.ttf[/blue]")
@@ -87,6 +71,33 @@ def assets_tree():
 
 ## Command Lines Build Functions @
 
+
+def state_management_manager():
+    config_data_of_fly = read_config(config_path)
+    fluttrflyrc_path = current_directory.parent / ".fluttrflyrc"
+    # Check if the config file exists
+    if fluttrflyrc_path.exists():
+        config_data_of_user_app = read_config(current_directory.parent / ".fluttrflyrc")
+        state_management_char = config_data_of_user_app.get(
+            "state_management", "b"
+        )  # Default to 'b' if not set
+        # Map state management character to setup type
+        state_management = "riverpod_setup" if state_management_char == "r" else "bloc_setup"
+        return state_management, config_data_of_user_app
+    else:
+        # Prompt user for input if config file does not exist
+        state_management = (
+            input("Enter your app state management (riverpod/bloc, or 'r'/'b'): ").strip().lower()
+        )
+        if state_management in ["r", "riverpod"]:
+            state_management = "riverpod_setup"
+            return state_management, config_data_of_fly
+        else:
+            console.print(f"[{warning_style}]📛 Invalid input! Defaulting to 'bloc'")
+            state_management = "bloc_setup"
+            return state_management, config_data_of_fly
+
+
 # Module function $
 
 
@@ -95,13 +106,16 @@ def to_create_module_structure(ModuleName):
     # Local variables
     fm_module_name = ModuleName.lower()
     module_path = current_directory / fm_module_name
+    state_management, _ = state_management_manager()
+
+    cubit_or_provider = "provider" if state_management == "riverpod_setup" else "cubit"
 
     # Creating structure
     module_path.mkdir(parents=True, exist_ok=True)
     folders_and_sub_folders_list_strs = [
         "data/model",
         "data/repository",
-        "presentation/cubit",
+        f"presentation/{cubit_or_provider}",
         "presentation/screen",
         "presentation/widgets",
     ]
@@ -153,19 +167,16 @@ def to_create_assets_structure():
 
 
 def to_create_core_structure():
-    config_data = read_config(config_path)
-    if config_data:
-        core = Path(config_data.get("core", ""))
-    shutil.copytree(core, current_directory / "core", dirs_exist_ok=True)
-    console.print("[bold yellow]Use this command to add 📦 dependencies : ", style="bold")
-    console.print(
-        "[bold cyan]flutter pub add[/bold cyan] cupertino_icons flutter_bloc dartz intl path_provider firebase_crashlytics logger url_launcher freezed_annotation build_runner package_info_plus image_picker day_night_time_picker freezed",
-        style="cyan",
+    state_management, config_data_of_fly = state_management_manager()
+    if config_data_of_fly:
+        core = Path(config_data_of_fly.get(f"{state_management}", "")) / "lib/core"
+    with_loading(
+        task=lambda: shutil.copytree(core, current_directory / "core", dirs_exist_ok=True),
+        status='Building',
     )
-    console.print("[bold magenta]✅ Chick 📄 notes present in core folder! [/bold magenta]")
+    with_loading(task=lambda: update_dependencies(state_management), status='Updating')
     console.print(
-        "[bold green]✅ Core structure created successfully! ✨ 🌟 ✨[/bold green]",
-        style=success_style,
+        f"[{success_style}]✅ Core structure created successfully! ✨ 🌟 ✨",
     )
 
 
@@ -180,8 +191,8 @@ def show_build_command_lines():
     commands = [
         "[bold magenta]fluttrfly build --module module name[/bold magenta]  - Create a module structure",
         "[bold cyan]fluttrfly build --assets[/bold cyan]  - Create an assets structure",
-        "[bold dodger_blue2]fluttrfly build --core[/bold dodger_blue2]   - Create core files and folders",
-        "[bold blue]fluttrfly build --help[/bold blue]   - For more info",
+        "[bold dodger_blue2]fluttrfly build --core[/bold dodger_blue2]    - Create core files and folders",
+        "[bold blue]fluttrfly build --help[/bold blue]    - For more info",
     ]
     for command in commands:
         console.print(command)

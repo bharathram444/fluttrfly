@@ -1,12 +1,13 @@
 {
-    "repo_dir": "/home/bharath/fluttrflyEnv",
-    "env": "/home/bharath/fluttrflyEnv/env",
-    "assets": "/home/bharath/fluttrflyEnv/env/assets",
-    "core": "/home/bharath/fluttrflyEnv/env/assets/flutter_things/lib/core",
-    "fonts": "/home/bharath/fluttrflyEnv/env/assets/fonts",
-    "templates": "/home/bharath/fluttrflyEnv/env/assets/templates",
-    "messages": "/home/bharath/fluttrflyEnv/env/messages",
+    "repo_dir": "/home/bharath/Documents/fluttrflyEnv",
+    "env": "/home/bharath/Documents/fluttrflyEnv/env",
+    "assets": "/home/bharath/Documents/fluttrflyEnv/env/assets",
+    "bloc_setup": "/home/bharath/Documents/fluttrflyEnv/env/assets/flutter_assets/bloc_setup",
+    "riverpod_setup": "/home/bharath/Documents/fluttrflyEnv/env/assets/flutter_assets/riverpod_setup",
+    "fonts": "/home/bharath/Documents/fluttrflyEnv/env/assets/fonts",
+    "templates": "/home/bharath/Documents/fluttrflyEnv/env/assets/templates",
+    "messages": "/home/bharath/Documents/fluttrflyEnv/env/messages",
     "environment_setup_done": true,
-    "env_version": "1.0.0",
+    "env_version": "dev",
     "repo_url": "https://github.com/bharathram444/fluttrflyEnv.git"
 }

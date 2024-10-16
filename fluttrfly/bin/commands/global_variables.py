@@ -17,7 +17,6 @@ fluttrfly_version = metadata.version("fluttrfly")
 console = Console()
 
 # consts
-
 libString = "/lib"
 
 # Define styles for messages
