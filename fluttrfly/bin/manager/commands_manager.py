@@ -38,7 +38,7 @@ class CommandsManager:
         """Handle the setup of Flutter projects using either Riverpod or Bloc."""
         setupCommand = SetupCommand()
         if riverpod and bloc:
-            setupCommand.usedBoth()
+            setupCommand.used_both()
         if riverpod:
             setupCommand.setup_riverpod()
         if bloc:

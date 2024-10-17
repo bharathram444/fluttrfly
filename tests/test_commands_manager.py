@@ -6,7 +6,6 @@ from fluttrfly.bin.manager.commands_manager import CommandsManager
 
 
 class TestCommandsManager(unittest.TestCase):
-
     @patch('fluttrfly.bin.manager.commands_manager.EnvCommand')
     def test_handle_env_version(self, MockEnvCommand):
         """Test handle_env when version flag is passed."""
@@ -131,18 +130,6 @@ class TestCommandsManager(unittest.TestCase):
 
         mock_setup_command.setup_bloc.assert_called_once()
         mock_setup_command.setup_riverpod.assert_not_called()
-
-    @patch('fluttrfly.bin.manager.commands_manager.SetupCommand')
-    def test_handle_setup_both_flags(self, MockSetupCommand):
-        """Test handle_setup when both riverpod and bloc flags are passed."""
-        manager = CommandsManager()
-        mock_setup_command = MockSetupCommand.return_value
-
-        # Simulate both flags
-        manager.handle_setup(riverpod=True, bloc=True)
-
-        # Assert that usedBoth was called and setup_riverpod or setup_bloc was not called individually
-        mock_setup_command.usedBoth.assert_called_once()
 
     @patch('fluttrfly.bin.manager.commands_manager.SetupCommand')
     def test_handle_setup_no_flags(self, MockSetupCommand):

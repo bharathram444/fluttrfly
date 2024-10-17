@@ -43,7 +43,7 @@ class SetupCommand:
             sys.exit(1)
         env_check_up(repo_dir=self.repo_dir, env_version=self.env_version, silence=True)
 
-    def usedBoth(self):
+    def used_both(self):
         """Provide instructions to use one from both Riverpod and Bloc."""
         console.print(
             f"[{warning_style}]🚨 Both --riverpod[-r] and --bloc[-b] flags were provided. Please use only one. ✨",
