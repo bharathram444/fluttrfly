@@ -1,13 +1,12 @@
 import unittest
-from unittest.mock import patch, MagicMock
-import sys
-from pathlib import Path
+from unittest.mock import patch
 
- # Assuming CommandsManager is located in commands_manager.py
+# Assuming CommandsManager is located in commands_manager.py
 from fluttrfly.bin.manager.commands_manager import CommandsManager
 
+
 class TestCommandsManager(unittest.TestCase):
-    
+
     @patch('fluttrfly.bin.manager.commands_manager.EnvCommand')
     def test_handle_env_version(self, MockEnvCommand):
         """Test handle_env when version flag is passed."""
@@ -53,10 +52,10 @@ class TestCommandsManager(unittest.TestCase):
         """Test handle_env with no flags."""
         manager = CommandsManager()
         mock_env_command = MockEnvCommand.return_value
-        
+
         # Simulate no flags
         manager.handle_env(version=False, reset=False, update=False, force=False)
-        
+
         # Assert that env_no_tags was called when no flags were passed
         mock_env_command.env_no_tags.assert_called_once()
 
@@ -102,10 +101,10 @@ class TestCommandsManager(unittest.TestCase):
         """Test handle_build with no flags."""
         manager = CommandsManager()
         mock_build_command = MockBuildCommand.return_value
-        
+
         # Simulate no flags
         manager.handle_build(module=False, assets=False, core=False)
-        
+
         # Assert that build_no_tags was called when no flags were passed
         mock_build_command.build_no_tags.assert_called_once()
 
@@ -138,10 +137,10 @@ class TestCommandsManager(unittest.TestCase):
         """Test handle_setup when both riverpod and bloc flags are passed."""
         manager = CommandsManager()
         mock_setup_command = MockSetupCommand.return_value
-        
+
         # Simulate both flags
         manager.handle_setup(riverpod=True, bloc=True)
-        
+
         # Assert that usedBoth was called and setup_riverpod or setup_bloc was not called individually
         mock_setup_command.usedBoth.assert_called_once()
 
@@ -150,10 +149,8 @@ class TestCommandsManager(unittest.TestCase):
         """Test handle_setup with no flags."""
         manager = CommandsManager()
         mock_setup_command = MockSetupCommand.return_value
-        
+
         # Simulate no flags
         manager.handle_setup(riverpod=False, bloc=False)
         # Assert that setup_no_tags was called when no flags were passed
         mock_setup_command.setup_no_tags.assert_called_once()
-
-

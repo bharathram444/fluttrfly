@@ -1,23 +1,22 @@
 import sys
 from pathlib import Path
 
-from ..functions.common_functions import with_loading
-
+from ..commands.global_variables import (
+    config_path,
+    console,
+    error_style,
+    libString,
+    warning_style,
+)
 from ..functions.build_functions import (
     show_build_command_lines,
     to_create_assets_structure,
     to_create_core_structure,
     to_create_module_structure,
 )
+from ..functions.common_functions import with_loading
 from ..functions.env_functions import env_check_up
 from ..functions.json_functions import load
-from ..commands.global_variables import (
-    config_path,
-    console,
-    error_style,
-    warning_style,
-    libString,
-)
 
 
 class BuildCommand:

@@ -1,7 +1,13 @@
 import sys
+
 import click
 
-
+from ..commands.global_variables import (
+    config_path,
+    console,
+    error_style,
+    warning_style,
+)
 from ..functions.env_functions import (
     check_for_updates,
     check_out_branch,
@@ -16,12 +22,6 @@ from ..functions.json_functions import (
     load,
     set_env_path,
     write_specific_field,
-)
-from ..commands.global_variables import (
-    config_path,
-    console,
-    error_style,
-    warning_style,
 )
 
 
@@ -60,7 +60,12 @@ class EnvCommand:
     def env_reset_tag(self):
         path_exists = check_path_exists(path=self.repo_dir, silence=False, force_off=False)
         if path_exists:
-            check_out_branch(repo_dir=self.repo_dir, branch_name=self.env_version)
+            check_out = check_out_branch(repo_dir=self.repo_dir, branch_name=self.env_version)
+            if check_out is False:
+                console.print(
+                    f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
+                )
+                sys.exit(1)
 
     def env_update_tag(self):
         check = check_path_exists(path=self.repo_dir, silence=False, force_off=False)

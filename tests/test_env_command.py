@@ -1,5 +1,7 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from fluttrfly.bin.commands.env_command import EnvCommand
 
 # Assuming the path to the functions and classes is 'fluttrfly.bin' (change accordingly)
@@ -59,7 +61,6 @@ def test_env_no_tags_without_setup_done(mock_env_command):
 
 
 # Test `env_version_tag`
-from unittest.mock import patch
 
 
 def test_env_version_tag(mock_env_command):

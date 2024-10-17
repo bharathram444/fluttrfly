@@ -1,28 +1,26 @@
 # setup_functions.py
-
 import json
 import os
+import plistlib
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 import xml.etree.ElementTree as ET
-import plistlib
+from pathlib import Path
+
 import yaml
 
-
-from ..functions.common_functions import read_yaml, write_yaml
-from ..functions.json_functions import read_config
-
 from ..commands.global_variables import (
+    config_path,
     console,
     error_style,
+    fluttrfly_version,
     info_style,
     success_style,
     warning_style,
-    config_path,
-    fluttrfly_version
 )
+from ..functions.common_functions import read_yaml, write_yaml
+from ..functions.json_functions import read_config
 
 
 def _get_setup_path(state_management):

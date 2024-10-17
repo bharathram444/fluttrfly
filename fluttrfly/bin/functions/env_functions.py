@@ -4,9 +4,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Imports
-from ..functions.common_functions import is_internet_available
-from ..functions.json_functions import check_path_exists
 from ..commands.global_variables import (
     console,
     error_style,
@@ -15,6 +12,10 @@ from ..commands.global_variables import (
     success_style,
     warning_style,
 )
+
+# Imports
+from ..functions.common_functions import is_internet_available
+from ..functions.json_functions import check_path_exists
 
 
 ## fluttrfly version updates @
@@ -197,7 +198,12 @@ def environment_setup(repo_url):
 def update_and_pull_changes(repo_dir, branch):
     current_env_branch = get_current_branch(repo_dir=repo_dir, silence=False)
     if current_env_branch != branch:
-        check_out_branch(repo_dir=repo_dir, branch_name=branch)
+        check_out = check_out_branch(repo_dir=repo_dir, branch_name=branch)
+        if check_out is False:
+            console.print(
+                f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
+            )
+            sys.exit(1)
     local_changes_removed = reset_and_clean(repo_dir=repo_dir)
     if local_changes_removed:
         check = check_for_updates(repo_dir=repo_dir, branch=branch)

@@ -1,11 +1,16 @@
 import sys
-from ..functions.common_functions import with_loading
+
 from ..commands.global_variables import (
+    config_path,
     console,
+    error_style,
     info_style,
     success_style,
     warning_style,
 )
+from ..functions.common_functions import with_loading
+from ..functions.env_functions import env_check_up
+from ..functions.json_functions import load
 from ..functions.setup_functions import (
     add_folders,
     create_app,
@@ -22,7 +27,21 @@ from ..functions.setup_functions import (
 
 class SetupCommand:
     def __init__(self):
-        pass
+        # Load initial configuration values
+        (
+            self.repo_url,
+            self.environment_setup_done,
+            self.repo_dir,
+            self.env_version,
+            self.messages,
+        ) = load(config_path=config_path)
+        # Check if the environment is set up
+        if not self.environment_setup_done:
+            console.print(
+                f"[{error_style}]📛 Environment not set up. Run 'fluttrfly env' first. 😟",
+            )
+            sys.exit(1)
+        env_check_up(repo_dir=self.repo_dir, env_version=self.env_version, silence=True)
 
     def usedBoth(self):
         """Provide instructions to use one from both Riverpod and Bloc."""
@@ -39,13 +58,13 @@ class SetupCommand:
         # step 2: add assets, lib, packages folders in user app.
         with_loading(
             task=lambda: add_folders(state_management=state_management, app_path=app_path),
-            status='Adding'
+            status='Adding',
         )
 
         # step 3: update pubspec.yaml
         with_loading(
             task=lambda: update_pubspec_yaml(file_path=app_path + "/pubspec.yaml"),
-            status='Updating'
+            status='Updating',
         )
 
         # step 4: update local_keys.dart
@@ -55,7 +74,7 @@ class SetupCommand:
                 org_name=org_name,
                 app_name=app_name,
             ),
-            status='Updating'
+            status='Updating',
         )
 
         # step 5: update AndroidManifest.xml and Info.plist based on platforms
@@ -64,32 +83,30 @@ class SetupCommand:
                 task=lambda: update_android_manifest(
                     manifest_path=app_path + "/android/app/src/main/AndroidManifest.xml"
                 ),
-                status='Updating'
+                status='Updating',
             )
         if 'ios' in platforms:
             with_loading(
                 task=lambda: update_info_plist(plist_path=app_path + "/ios/Runner/Info.plist"),
-                status='Updating'
+                status='Updating',
             )
 
         # step 6: update dependencies based on state management type
         with_loading(
-            task=lambda: update_dependencies(state_management=state_management),
-            status='Updating'
+            task=lambda: update_dependencies(state_management=state_management), status='Updating'
         )
 
         # step 7: run flutter commands to complete the setup
-        with_loading(
-            task=lambda: run_flutter_commands(app_path=app_path),
-            status='Running'
-        )
+        with_loading(task=lambda: run_flutter_commands(app_path=app_path), status='Running')
 
         # step 8: create .fluttrflyrc in user app
         with_loading(task=lambda: create_fluttrflyrc(app_path=app_path))
 
         # step 9: provide navigation info
         console.print(f"[{info_style}]ℹ️  Run: cd {app_name} && code . ✨")
-        console.print(f"[{success_style}]✅ {state_management.capitalize()} project setup successfully! ✨")
+        console.print(
+            f"[{success_style}]✅ {state_management.capitalize()} project setup successfully! ✨"
+        )
 
     def setup_riverpod(self):
         """Set up the Flutter project using Riverpod."""

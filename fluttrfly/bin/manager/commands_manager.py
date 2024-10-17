@@ -1,10 +1,7 @@
 # command_manager.py
-import sys
-
-from ..commands.setup_command import SetupCommand
-
 from ..commands.build_command import BuildCommand
 from ..commands.env_command import EnvCommand
+from ..commands.setup_command import SetupCommand
 
 
 class CommandsManager:

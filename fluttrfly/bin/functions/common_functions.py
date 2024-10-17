@@ -1,7 +1,8 @@
 # common_functions.py
 import socket
-import yaml
 import time
+
+import yaml
 
 # Imports
 from ..commands.global_variables import (
@@ -9,7 +10,6 @@ from ..commands.global_variables import (
     error_style,
     success_style,
 )
-
 
 ## Internet check @
 

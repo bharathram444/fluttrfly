@@ -1,6 +1,7 @@
 import click
-from .commands_manager import CommandsManager
+
 from ..commands.global_variables import fluttrfly_version
+from .commands_manager import CommandsManager
 
 
 # Here our CLI starts.

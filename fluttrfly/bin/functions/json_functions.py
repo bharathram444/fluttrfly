@@ -61,11 +61,7 @@ def load(config_path):
             config_data.get("repo_url", "https://github.com/bharathram444/fluttrflyEnv.git"),
             config_data.get("environment_setup_done", False),
             config_data.get("repo_dir", ""),
-            # DON'T change this, here and json, first marge dev with main and
-            # change this to "2.0.0" and create tag and proceed...
-            config_data.get(
-                "env_version", "dev"
-            ),  # here we have to keep 2.0.0 now i am keeping "dev"
+            config_data.get("env_version", "2.0.0"),
             config_data.get("messages", ""),
         )
     return "https://github.com/bharathram444/fluttrflyEnv.git", False, "", "", ""
@@ -139,9 +135,7 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
                 data={
                     "repo_dir": "",
                     "environment_setup_done": False,
-                    # DON'T change this, here and json, first marge dev with main and
-                    # change this to "2.0.0" and create tag and proceed...
-                    "env_version": "dev",  # here we have to keep 2.0.0 now i am keeping "dev"
+                    "env_version": "2.0.0",
                     "repo_url": "https://github.com/bharathram444/fclAssets.git",
                 },
             )

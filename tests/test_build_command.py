@@ -1,13 +1,15 @@
-import pytest
 from pathlib import Path
+
+import pytest
+
 from fluttrfly.bin.commands.build_command import BuildCommand
 
 # Mocking functions and global variables used in the BuildCommand class
 from fluttrfly.bin.commands.global_variables import (
     console,
     error_style,
-    warning_style,
     libString,
+    warning_style,
 )
 
 
@@ -80,7 +82,6 @@ def test_build_module_tag_invalid_dir(build_command, mocker):
 #     mock_with_loading.assert_called_once()
 
 
-
 def test_build_module_tag_invalid_module(build_command, mocker):
     # Mock Path.cwd() to simulate we're in the 'lib' directory
     mocker.patch('pathlib.Path.cwd', return_value=Path(f"/some/path{libString}"))
@@ -96,10 +97,11 @@ def test_build_module_tag_invalid_module(build_command, mocker):
         f"[{error_style}]📛 ModuleName argument must be a non-numeric string."
     )
 
+
 # def test_build_assets_tag_valid(build_command, mocker, mock_with_loading):
 #     # Mock Path.cwd() to simulate the current directory
 #     mocker.patch('pathlib.Path.cwd', return_value=Path("/some/valid/directory"))
-    
+
 #     # Mock (Path.cwd() / 'assets').exists() to return False
 #     mocker.patch('pathlib.Path.exists', side_effect=lambda: False)
 
@@ -108,7 +110,6 @@ def test_build_module_tag_invalid_module(build_command, mocker):
 
 #     # Ensure with_loading was called
 #     mock_with_loading.assert_called_once_with(mock.ANY)
-
 
 
 def test_build_assets_tag_already_exists(build_command, mocker):
@@ -142,7 +143,6 @@ def test_build_assets_tag_already_exists(build_command, mocker):
 
 #     # Ensure the core structure is created
 #     mock_core_structure.assert_called_once()
-
 
 
 def test_build_core_tag_already_exists(build_command, mocker):

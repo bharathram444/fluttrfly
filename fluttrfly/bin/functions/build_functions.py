@@ -2,14 +2,9 @@
 
 
 import shutil
-import time
 from pathlib import Path
 
 from rich.tree import Tree
-
-from ..functions.common_functions import with_loading
-
-from ..functions.setup_functions import update_dependencies
 
 # Imports
 from ..commands.global_variables import (
@@ -20,11 +15,13 @@ from ..commands.global_variables import (
     success_style,
     warning_style,
 )
+from ..functions.common_functions import with_loading
+from ..functions.setup_functions import update_dependencies
 from .json_functions import read_config
 
 
 ## Tree Functions @
-def module_tree(module_name: str):
+def module_tree(module_name: str, cubit_or_provider: str = "cubit"):
     """
     Generates a styled, compressed module tree representation using rich.
 
@@ -39,7 +36,7 @@ def module_tree(module_name: str):
     data_node.add("[green]repository[/green]")
 
     presentation_node = tree.add("[bold magenta]presentation[/bold magenta]")
-    presentation_node.add("[magenta]cubit[/magenta]")
+    presentation_node.add(f"[magenta]{cubit_or_provider}[/magenta]")
 
     screen_node = presentation_node.add("[magenta]screen[/magenta]")
     screen_node.add(f"[blue]{module_name}_page.dart[/blue]")
@@ -139,7 +136,7 @@ def to_create_module_structure(ModuleName):
         "w"
     ) as new_file:
         new_file.write(component_temp)
-    module_tree(module_name=fm_module_name)
+    module_tree(module_name=fm_module_name, cubit_or_provider=cubit_or_provider)
 
 
 # Assets Function $

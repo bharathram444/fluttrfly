@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fluttrfly"
-version = "1.0.0"
+version = "2.0.0"
 description = "a versatile CLI tool that automates the creation of essential project structures."
 authors = ["Bharath ram <bharathram123@gmail.com>"]
 license = "MIT"
@@ -31,7 +31,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-
 [tool.black]
 line-length = 99
 skip-string-normalization = true
@@ -60,6 +59,6 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
-    "migrations"
+    "migrations",
 ]
 line-length = 99
