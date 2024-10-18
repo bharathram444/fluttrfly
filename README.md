@@ -29,7 +29,15 @@
 
 Now, executing `fluttrfly env` creates a development environment by providing essential templates, files, and folders. These resources are utilized by other FluttrFly commands, ensuring a well-configured and efficient development environment.
 ## 💡Usage/Examples:
-
+#### Set Up a Flutter Project:
+Set up a riverpod project:
+```bash
+fluttrfly setup --riverpod
+```
+Set up a bloc project:
+```bash
+fluttrfly setup --bloc
+```
 #### Generate Project Structures:
 
 Create a New Module:
@@ -96,7 +104,7 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 
 
-![Logo](image/dark.png)
+![Logo](https://github.com/bharathram444/fluttrfly/blob/main/image/dark.png?raw=true)
 
 
 ## 📬 Feedback

@@ -293,8 +293,8 @@ def show_setup_command_lines():
     console.print(command_prompt)
     # Commands with bold styles and different colors
     commands = [
-        "[bold magenta]fluttrfly setup --riverpod[/bold magenta]  - Set up the riverpod project",
-        "[bold cyan]fluttrfly setup --bloc[/bold cyan]  - Set up the bloc project",
+        "[bold magenta]fluttrfly setup --riverpod[/bold magenta]  - Set up a riverpod project",
+        "[bold cyan]fluttrfly setup --bloc[/bold cyan]  - Set up a bloc project",
         "[bold dodger_blue2]fluttrfly setup --help[/bold dodger_blue2]  - For more info",
     ]
     for command in commands:

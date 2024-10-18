@@ -136,7 +136,7 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
                     "repo_dir": "",
                     "environment_setup_done": False,
                     "env_version": "2.0.0",
-                    "repo_url": "https://github.com/bharathram444/fclAssets.git",
+                    "repo_url": "https://github.com/bharathram444/fluttrflyEnv.git",
                 },
             )
             console.print(
