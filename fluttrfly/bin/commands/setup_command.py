@@ -63,7 +63,9 @@ class SetupCommand:
 
         # step 3: update pubspec.yaml
         with_loading(
-            task=lambda: update_pubspec_yaml(file_path=app_path + "/pubspec.yaml"),
+            task=lambda: update_pubspec_yaml(
+                file_path=app_path + "/pubspec.yaml", state_management=state_management
+            ),
             status='Updating',
         )
 

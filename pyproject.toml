@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fluttrfly"
-version = "2.0.0"
+version = "2.0.1"
 description = "a versatile CLI tool that automates the creation of essential project structures."
 authors = ["Bharath ram <bharathram123@gmail.com>"]
 license = "MIT"

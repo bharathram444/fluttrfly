@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file. The format 
 
 - New feature or command (e.g., `fluttrfly add`) for adding widgets and utilities to the core.
 
+### Version 2.0.1 (2024-10-18)
+
+#### Added
+- Enhanced `update_pubspec_yaml` function:
+  - Reads the `assets` section from `env_pubspec.yaml` and updates the user flutter app's `pubspec.yaml` accordingly.
+
+
 ### Version 2.0.0 (2024-10-18)
 
 #### Added

@@ -23,6 +23,15 @@ from ..functions.common_functions import read_yaml, write_yaml
 from ..functions.json_functions import read_config
 
 
+def _env_pubspec(state_management):
+    setup_path = _get_setup_path(state_management)
+    pubspec_env_path = setup_path / "pubspec.yaml"
+    # Load the pubspec.yaml file
+    with open(pubspec_env_path, 'r') as file:
+        pubspec = yaml.safe_load(file)
+        return pubspec
+
+
 def _get_setup_path(state_management):
     """Retrieve the setup path from the configuration file based on the state management type."""
     # Read the configuration data
@@ -98,19 +107,22 @@ def add_folders(state_management, app_path):
     console.print(f"[{success_style}]✅ assets, lib, packages, test added successfully! ✨")
 
 
-def update_pubspec_yaml(file_path):
+def update_pubspec_yaml(file_path, state_management):
     """Update pubspec.yaml by adding specific keys and values."""
     # Step 5: Update pubspec.yaml.
     # 0. Read the existing YAML data
     data = read_yaml(file_path)
-
+    # Path of the env pubspec.yaml file
+    pubspec = _env_pubspec(state_management)
+    # Read and assets section
+    assets = pubspec.get('flutter', {}).get('assets', [])
     # 1. Add 'fluttrfly' under the root
     data['dependencies']['fluttrfly'] = {'path': 'packages/fluttrfly'}
 
     # 2. Add 'assets' under 'flutter'
     if 'flutter' not in data:
         data['flutter'] = {}
-    data['flutter']['assets'] = ['assets/', 'assets/logo/']
+    data['flutter']['assets'] = assets
 
     # 3. Add 'flutter_launcher_icons' under the root
     data['flutter_launcher_icons'] = {
@@ -206,11 +218,7 @@ def update_dependencies(state_management):
     Updates Flutter dependencies in the pubspec.yaml file and installs them using flutter pub add.
     """
     # Path of the env pubspec.yaml file
-    setup_path = _get_setup_path(state_management)
-    pubspec_env_path = setup_path / "pubspec.yaml"
-    # Load the pubspec.yaml file
-    with open(pubspec_env_path, 'r') as file:
-        pubspec = yaml.safe_load(file)
+    pubspec = _env_pubspec(state_management)
     # Extract dependencies and dev_dependencies
     dependencies = pubspec.get('dependencies', {})
     dev_dependencies = pubspec.get('dev_dependencies', {})
