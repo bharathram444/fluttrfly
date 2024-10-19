@@ -84,8 +84,13 @@ def all_paths_get(config_path):
     return "", "", "", "", "", "", "", ""
 
 
-def check_path_exists(path, silence, force_off):
+def check_path_exists(path: str, silence, force_off):
     try:
+        if path == "":
+            console.print(
+                f"[{error_style}]📛 Environment not set up. Run 'fluttrfly env' first. 😟"
+            )
+            return None
         if Path(path).exists():
             if not silence:
                 console.print(f"[{success_style}]✅ Path '{path}' exists. ✨")
@@ -236,12 +241,12 @@ def paths_check_up(repo_dir):
         f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/assets",
         f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/lib",
         f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/packages",
-        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/fluttrfly",
+        f"{str(repo_dir)}/env/assets/flutter_assets/bloc_setup/packages/fluttrfly",
         f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup",
         f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/assets",
         f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/lib",
         f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/packages",
-        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/fluttrfly",
+        f"{str(repo_dir)}/env/assets/flutter_assets/riverpod_setup/packages/fluttrfly",
         f"{str(repo_dir)}/env/assets/fonts",
         f"{str(repo_dir)}/env/assets/templates",
         f"{str(repo_dir)}/env/messages/",

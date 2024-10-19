@@ -76,6 +76,8 @@ class EnvCommand:
     def env_force_tag(self):
         """Force the setup of the environment, asking for user confirmation if necessary."""
         path_exists = check_path_exists(path=self.repo_dir, silence=False, force_off=True)
+        if path_exists is None:
+            sys.exit(0)
         if not path_exists:
             choice_home = input(
                 "Do you want to set up existing fluttrfly env folder or directory path? (Y/n): "

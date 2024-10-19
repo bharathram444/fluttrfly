@@ -8,6 +8,14 @@ All notable changes to this project will be documented in this file. The format 
 
 - New feature or command (e.g., `fluttrfly add`) for adding widgets and utilities to the core.
 
+### Version 2.0.2 (2024-10-19)
+
+#### Added
+- Bug Fix in `check_path_exists` function:
+  - Here we read empty json field "repo_dir": "" then we returned None to avoid bug in `fluttrfly env --force` by saying use `fluttrfly env`.
+- Bug Fix in `paths_check_up` function:
+  - Here we checked wrong hardcoded paths at line 244, 249. We fixed it.
+
 ### Version 2.0.1 (2024-10-18)
 
 #### Added
