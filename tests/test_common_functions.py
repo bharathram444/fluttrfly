@@ -2,13 +2,30 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import yaml
 
+from fluttrfly.bin.commands.global_variables import (
+    console,
+    error_style,
+    info_style,
+    success_style,
+    warning_style,
+)
+
 # Import the common functions
 from fluttrfly.bin.functions.common_functions import (
+    error_x,
+    info_x,
     is_internet_available,
     read_yaml,
+    success_x,
+    warning_x,
     with_loading,
     write_yaml,
 )
+
+
+def check_console_output(mock_console, expected_message):
+    """Helper function to check console output"""
+    mock_console.assert_any_call(expected_message)
 
 
 # Test for is_internet_available
@@ -35,9 +52,9 @@ def test_with_loading_file_not_found():
         'fluttrfly.bin.commands.global_variables.console.print'
     ) as mock_console_print:
         with_loading(mock_task, duration=1, status="Creating")
-        mock_console_print.assert_any_call("[bold red]📛 Error: File not found 😟")
+        mock_console_print.assert_any_call(f"[{error_style}]📛 Error: File not found 😟")
         mock_console_print.assert_any_call(
-            "[bold red]📛 The configuration file is missing or the specified path is a directory. 😟"
+            f"[{error_style}]📛 The configuration file is missing or the specified path is a directory. 😟"
         )
 
 
@@ -47,7 +64,9 @@ def test_with_loading_general_exception():
         'fluttrfly.bin.commands.global_variables.console.print'
     ) as mock_console_print:
         with_loading(mock_task, duration=1, status="Creating")
-        mock_console_print.assert_called_with("[bold red]📛 An error occurred: General error")
+        mock_console_print.assert_called_with(
+            f"[{error_style}]📛 An error occurred: General error 😟"
+        )
 
 
 # Test for read_yaml
@@ -68,3 +87,19 @@ def test_write_yaml():
             mock_yaml_dump.assert_called_once_with(
                 mock_data, mock_file(), default_flow_style=False, sort_keys=False
             )
+
+
+def test_console_output_functions(mocker):
+    mock_console = mocker.patch.object(console, 'print')
+    # Test error_x
+    error_x("Test error")
+    check_console_output(mock_console, f"[{error_style}]📛 Test error 😟")
+    # Test warning_x
+    warning_x("Test warning")
+    check_console_output(mock_console, f"[{warning_style}]🚨 Test warning 😕")
+    # Test info_x
+    info_x("Test info")
+    check_console_output(mock_console, f"[{info_style}]ℹ️ Test info 😐")
+    # Test success_x
+    success_x("Test success")
+    check_console_output(mock_console, f"[{success_style}]✅ Test success 🙂")

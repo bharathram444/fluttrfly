@@ -8,6 +8,14 @@ All notable changes to this project will be documented in this file. The format 
 
 - New feature or command (e.g., `fluttrfly add`) for adding widgets and utilities to the core.
 
+### Version 2.0.3 (2024-10-21)
+
+#### Added
+- Bug Fix in `state_management_manager` function:
+  - Here we get path of user project path to read `.fluttrflyrc` but previous logic were not capable to read the file that's way, we changed logic.
+- Bug Fix in `common_functions.py` function:
+  - Here we added styles fun's to reduce code and easy to use style at console for error, success, warning, info.
+
 ### Version 2.0.2 (2024-10-19)
 
 #### Added

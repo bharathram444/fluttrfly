@@ -2,6 +2,7 @@
 
 
 import shutil
+import sys
 from pathlib import Path
 
 from rich.tree import Tree
@@ -12,10 +13,9 @@ from ..commands.global_variables import (
     config_path,
     console,
     current_directory,
-    success_style,
-    warning_style,
+    lib_string,
 )
-from ..functions.common_functions import with_loading
+from ..functions.common_functions import success_x, warning_x, with_loading
 from ..functions.setup_functions import update_dependencies
 from .json_functions import read_config
 
@@ -44,10 +44,7 @@ def module_tree(module_name: str, cubit_or_provider: str = "cubit"):
     presentation_node.add("[magenta]widgets[/magenta]")
 
     console.print(tree)
-    console.print(
-        f"[bold green]✅ Module '{module_name}' created successfully! ✨ 🌟 ✨[/bold green]",
-        style=success_style,
-    )
+    success_x(message=f"Module '{module_name}' created successfully!")
 
 
 def assets_tree():
@@ -60,39 +57,60 @@ def assets_tree():
         tree.add(f"[bold {branch_colors[branch]}]" + branch, style=branch_colors[branch])
 
     console.print(tree)
-    console.print(
-        "[bold green]✅ Assets structure created successfully! ✨ 🌟 ✨[/bold green]",
-        style=success_style,
-    )
+    success_x(message="Assets structure created successfully!")
 
 
 ## Command Lines Build Functions @
 
 
-def state_management_manager():
-    config_data_of_fly = read_config(config_path)
-    fluttrflyrc_path = current_directory.parent / ".fluttrflyrc"
-    # Check if the config file exists
+# Function to get the root project path by checking if the current path contains '/lib'
+def get_project_root() -> Path:
+    if lib_string in current_directory.as_posix():
+        parts = current_directory.parts
+        lib_index = parts.index('lib')
+        return Path(*parts[:lib_index])  # Return the path up to '/home/user/project'
+    return current_directory  # Return the original path if 'lib' is not found
+
+
+# Function to read the state management config from the .fluttrflyrc file
+def read_state_management_config(fluttrflyrc_path: Path) -> str:
     if fluttrflyrc_path.exists():
-        config_data_of_user_app = read_config(current_directory.parent / ".fluttrflyrc")
-        state_management_char = config_data_of_user_app.get(
-            "state_management", "b"
-        )  # Default to 'b' if not set
+        config_data_of_user_app = read_config(fluttrflyrc_path)
+        return config_data_of_user_app.get("state_management", "b")  # Default to 'b' if not set
+    return None
+
+
+# Function to handle user input for state management if the config file is missing
+def prompt_state_management_choice() -> str:
+    state_management = (
+        input("Enter your app state management (riverpod/bloc, or 'r'/'b'): ").strip().lower()
+    )
+    if state_management in ["r", "riverpod"]:
+        return "riverpod_setup"
+    else:
+        warning_x(message="Invalid input! Defaulting to 'bloc'")
+        return "bloc_setup"
+
+
+# Main function to manage state management setup
+def state_management_manager() -> str:
+    # Get the project root path
+    project_root = get_project_root()
+
+    # Define the path to the .fluttrflyrc config file
+    fluttrflyrc_path = project_root / ".fluttrflyrc"
+
+    # Try to read the state management configuration from the file
+    state_management_char = read_state_management_config(fluttrflyrc_path)
+
+    if state_management_char:
         # Map state management character to setup type
         state_management = "riverpod_setup" if state_management_char == "r" else "bloc_setup"
-        return state_management, config_data_of_user_app
     else:
-        # Prompt user for input if config file does not exist
-        state_management = (
-            input("Enter your app state management (riverpod/bloc, or 'r'/'b'): ").strip().lower()
-        )
-        if state_management in ["r", "riverpod"]:
-            state_management = "riverpod_setup"
-            return state_management, config_data_of_fly
-        else:
-            console.print(f"[{warning_style}]📛 Invalid input! Defaulting to 'bloc'")
-            state_management = "bloc_setup"
-            return state_management, config_data_of_fly
+        # Prompt the user for input if the config file does not exist
+        state_management = prompt_state_management_choice()
+
+    return state_management
 
 
 # Module function $
@@ -103,7 +121,7 @@ def to_create_module_structure(ModuleName):
     # Local variables
     fm_module_name = ModuleName.lower()
     module_path = current_directory / fm_module_name
-    state_management, _ = state_management_manager()
+    state_management = state_management_manager()
 
     cubit_or_provider = "provider" if state_management == "riverpod_setup" else "cubit"
 
@@ -164,17 +182,21 @@ def to_create_assets_structure():
 
 
 def to_create_core_structure():
-    state_management, config_data_of_fly = state_management_manager()
+    config_data_of_fly = read_config(config_path)
+    state_management = state_management_manager()
+    core_at_user_pro = get_project_root() / "lib/core"
     if config_data_of_fly:
         core = Path(config_data_of_fly.get(f"{state_management}", "")) / "lib/core"
-    with_loading(
-        task=lambda: shutil.copytree(core, current_directory / "core", dirs_exist_ok=True),
-        status='Building',
-    )
-    with_loading(task=lambda: update_dependencies(state_management), status='Updating')
-    console.print(
-        f"[{success_style}]✅ Core structure created successfully! ✨ 🌟 ✨",
-    )
+    if not core_at_user_pro.exists():
+        with_loading(
+            task=lambda: shutil.copytree(core, current_directory / "core", dirs_exist_ok=True),
+            status='Building',
+        )
+        with_loading(task=lambda: update_dependencies(state_management), status='Updating')
+        success_x(message="Core structure created successfully!")
+    else:
+        warning_x(message=f"Core structure already exists at {core_at_user_pro.as_posix()}")
+        sys.exit(0)
 
 
 def show_build_command_lines():

@@ -6,15 +6,18 @@ from pathlib import Path
 
 from ..commands.global_variables import (
     console,
-    error_style,
     fluttrfly_version,
     info_style,
-    success_style,
-    warning_style,
 )
 
 # Imports
-from ..functions.common_functions import is_internet_available
+from ..functions.common_functions import (
+    error_x,
+    info_x,
+    is_internet_available,
+    success_x,
+    warning_x,
+)
 from ..functions.json_functions import check_path_exists
 
 
@@ -42,10 +45,10 @@ def clone_repo_at_home(repo_url):
         user_home = Path.home()
         repo_dir = user_home / Path(repo_url.rstrip('.git')).name
         subprocess.run(["git", "clone", repo_url, str(repo_dir)], check=True)
-        console.print(f"[{success_style}]✅ Repository cloned successfully to: {repo_dir} ✨")
+        success_x(message=f"Repository cloned successfully to: {repo_dir}")
         return repo_dir
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error cloning repository: {error} 😟")
+        error_x(message=f"Error cloning repository: {error}")
         return None
 
 
@@ -76,12 +79,10 @@ def clone_repo_at_user_chosen_location(repo_url):
             subprocess.run(["git", "clone", repo_url, str(repo_dir)], check=True)
             return repo_dir
         else:
-            console.print(
-                f"[{warning_style}]🚨 Exiting, the provided path is empty. Please provide a valid path. ✨"
-            )
+            warning_x(message="Exiting, the provided path is empty. Please provide a valid path.")
             return None
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error cloning repository: {error} 😟")
+        error_x(message=f"Error cloning repository: {error}")
         console.print("Using a default directory as a fallback.")
         return None
 
@@ -89,10 +90,11 @@ def clone_repo_at_user_chosen_location(repo_url):
 def git_stash(repo_dir):
     try:
         subprocess.run(["git", "stash"], cwd=repo_dir, check=True)
-        console.print(f"[{success_style}]✅ Changes stashed successfully. ✨")
+        success_x(message="Changes stashed successfully.")
+        success_x(message="")
         return True
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error stashing changes: {error} 😟")
+        error_x(message=f"Error stashing changes: {error}")
         return False
 
 
@@ -100,10 +102,10 @@ def reset_and_clean(repo_dir):
     try:
         subprocess.run(["git", "reset", "--hard", "HEAD"], cwd=repo_dir, check=True)
         subprocess.run(["git", "clean", "-fd"], cwd=repo_dir, check=True)
-        console.print(f"[{success_style}]✅ Local changes reset and cleaned successfully. ✨")
+        success_x(message="Local changes reset and cleaned successfully.")
         return True
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error resetting and cleaning: {error} 😟")
+        error_x(message=f"Error resetting and cleaning: {error}")
         return False
 
 
@@ -111,10 +113,10 @@ def pull_commits(repo_dir, branch_name):
     try:
         git_stash(repo_dir)
         subprocess.run(["git", "pull", "origin", branch_name], cwd=repo_dir, check=True)
-        console.print(f"[{success_style}]✅ Updates pulled successfully. ✨")
+        success_x(message="Updates pulled successfully.")
         return True
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error pulling updates: {error} 😟")
+        error_x(message=f"Error pulling updates: {error}")
         return False
 
 
@@ -129,21 +131,21 @@ def check_for_updates(repo_dir, branch):
         output = subprocess.check_output(["git", "status", "-uno"], cwd=repo_dir)
 
         if f"Your branch is behind 'origin/{branch}'" in output.decode():
-            console.print(f"[{warning_style}]🚨 Updates available for env {branch} ✨")
+            warning_x(message=f"Updates available for env {branch}")
             console.print(
                 f"[{info_style}]🛠️  The environment is already set up. You can update it using 'fluttrfly env --update'. 🛠️"
             )
             return True
         else:
-            console.print(f"[{success_style}]✅ No updates available for env {branch} ✨")
+            success_x(message=f"No updates available for env {branch}")
             return False
     except subprocess.CalledProcessError as error:
         # Check if the error message indicates an internet connection issue
         if "Could not resolve host" in str(error):
-            console.print(f"[{error_style}]📛 Error checking for updates: {error} 😟")
-            console.print(f"[{error_style}]📛 Check your internet connection and try again. 😟")
+            error_x(message=f"Error checking for updates: {error}")
+            error_x(message="Check your internet connection and try again.")
         else:
-            console.print(f"[{error_style}]📛 Error checking for updates: {error} 😟")
+            error_x(message=f"Error checking for updates: {error}")
         return False
 
 
@@ -154,10 +156,10 @@ def get_current_branch(repo_dir, silence):
         )
         current_branch = output.decode().strip()
         if not silence:
-            console.print(f"[{success_style}]✅ Current branch: {current_branch} ✨")
+            success_x(message=f"Current branch: {current_branch}")
         return current_branch
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error getting current branch: {error} 😟")
+        error_x(message=f"Error getting current branch: {error}")
         return None
 
 
@@ -165,10 +167,10 @@ def check_out_branch(repo_dir, branch_name):
     try:
         git_stash(repo_dir)
         subprocess.run(["git", "checkout", branch_name], cwd=repo_dir, check=True)
-        console.print(f"[{success_style}]✅ Checked out to branch: {branch_name} ✨")
+        success_x(message=f"Checked out to branch: {branch_name}")
         return True
     except subprocess.CalledProcessError as error:
-        console.print(f"[{error_style}]📛 Error checking out branch: {error} 😟")
+        error_x(message=f"Error checking out branch: {error}")
         return False
 
 
@@ -186,11 +188,11 @@ def environment_setup(repo_url):
         if choice_location.lower() == 'y':
             repo_dir = clone_repo_at_user_chosen_location(repo_url=repo_url)
         elif choice_location.lower() == 'n':
-            console.print(f"[{warning_style}]🚨 Exiting. Please choose a setup option. ✨")
+            warning_x(message="Exiting. Please choose a setup option.")
         else:
-            console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
+            error_x(message="Invalid choice. Exiting.")
     else:
-        console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
+        error_x(message="Invalid choice. Exiting.")
 
     return repo_dir
 
@@ -200,17 +202,15 @@ def update_and_pull_changes(repo_dir, branch):
     if current_env_branch != branch:
         check_out = check_out_branch(repo_dir=repo_dir, branch_name=branch)
         if check_out is False:
-            console.print(
-                f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
-            )
+            error_x(message="You have to set up env again using 'fluttrfly env --force'")
             sys.exit(1)
     local_changes_removed = reset_and_clean(repo_dir=repo_dir)
     if local_changes_removed:
         check = check_for_updates(repo_dir=repo_dir, branch=branch)
         if check:
             pull_commits(repo_dir=repo_dir, branch_name=branch)
-            console.print(
-                f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{current_env_branch}! ✨"
+            info_x(
+                message=f"You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{current_env_branch}!"
             )
 
 
@@ -220,22 +220,16 @@ def env_check_up(repo_dir, env_version, silence):
         current_env_branch = get_current_branch(repo_dir=repo_dir, silence=silence)
 
         if current_env_branch is None:
-            console.print(
-                f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
-            )
+            error_x(message="You have to set up env again using 'fluttrfly env --force'")
             sys.exit(1)
         if env_version == current_env_branch:
             if not silence:
-                console.print(
-                    f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨"
+                info_x(
+                    message=f"You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}!"
                 )
         if env_version != current_env_branch:
-            console.print(
-                f"[{info_style}]ℹ️  The env (v{current_env_branch}) != fluttrfly v{fluttrfly_version}. ℹ️"
-            )
-            console.print(
-                f"[{error_style}]📛 You have to reset env using 'fluttrfly env --reset' 😟"
-            )
+            info_x(message=f"The env (v{current_env_branch}) != fluttrfly v{fluttrfly_version}.")
+            error_x(message="You have to reset env using 'fluttrfly env --reset'")
             sys.exit(1)
     elif not path_exists:
         sys.exit(1)

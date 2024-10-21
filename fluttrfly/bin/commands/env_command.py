@@ -4,10 +4,8 @@ import click
 
 from ..commands.global_variables import (
     config_path,
-    console,
-    error_style,
-    warning_style,
 )
+from ..functions.common_functions import error_x, warning_x
 from ..functions.env_functions import (
     check_for_updates,
     check_out_branch,
@@ -62,9 +60,7 @@ class EnvCommand:
         if path_exists:
             check_out = check_out_branch(repo_dir=self.repo_dir, branch_name=self.env_version)
             if check_out is False:
-                console.print(
-                    f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
-                )
+                error_x(message="You have to set up env again using 'fluttrfly env --force'")
                 sys.exit(1)
 
     def env_update_tag(self):
@@ -85,9 +81,7 @@ class EnvCommand:
             if choice_home.lower() == 'y':
                 present_repo_dir = set_env_path()
                 if present_repo_dir is None:
-                    console.print(
-                        f"[{error_style}]📛 Use 'fluttrfly env --force' to create the environment. 😟"
-                    )
+                    error_x(message="Use 'fluttrfly env --force' to create the environment.")
                     exit(1)
                 check_out = check_out_branch(
                     repo_dir=present_repo_dir, branch_name=self.env_version
@@ -101,7 +95,7 @@ class EnvCommand:
             elif choice_home.lower() == 'n':
                 self.prompt_for_recreation()
             else:
-                console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
+                error_x(message="Invalid choice. Exiting.")
 
     def prompt_for_recreation(self):
         """Prompt the user to recreate the fluttrfly environment if it already exists."""
@@ -122,6 +116,6 @@ class EnvCommand:
                 repo_url=self.repo_url,
             )
         elif choice_location.lower() == 'n':
-            console.print(f"[{warning_style}]🚨 Exiting. Please choose an option. ✨")
+            warning_x("Exiting. Please choose an option.")
         else:
-            console.print(f"[{error_style}]📛 Invalid choice. Exiting. 😟")
+            error_x(message="Invalid choice. Exiting.")

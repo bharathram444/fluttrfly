@@ -29,7 +29,7 @@ def test_used_both(mock_print, mock_exit, setup_command, mocker):
     setup_command.used_both()
 
     mock_print.assert_called_once_with(
-        f"[{warning_style}]🚨 Both --riverpod[-r] and --bloc[-b] flags were provided. Please use only one. ✨"
+        f"[{warning_style}]🚨 Both --riverpod[-r] and --bloc[-b] flags were provided. Please use only one. 😕"
     )
     mock_exit.assert_called_once_with(1)
 

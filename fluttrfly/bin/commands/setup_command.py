@@ -1,14 +1,7 @@
 import sys
 
-from ..commands.global_variables import (
-    config_path,
-    console,
-    error_style,
-    info_style,
-    success_style,
-    warning_style,
-)
-from ..functions.common_functions import with_loading
+from ..commands.global_variables import config_path
+from ..functions.common_functions import error_x, info_x, success_x, warning_x, with_loading
 from ..functions.env_functions import env_check_up
 from ..functions.json_functions import load
 from ..functions.setup_functions import (
@@ -37,16 +30,16 @@ class SetupCommand:
         ) = load(config_path=config_path)
         # Check if the environment is set up
         if not self.environment_setup_done:
-            console.print(
-                f"[{error_style}]📛 Environment not set up. Run 'fluttrfly env' first. 😟",
+            error_x(
+                "Environment not set up. Run 'fluttrfly env' first.",
             )
             sys.exit(1)
         env_check_up(repo_dir=self.repo_dir, env_version=self.env_version, silence=True)
 
     def used_both(self):
         """Provide instructions to use one from both Riverpod and Bloc."""
-        console.print(
-            f"[{warning_style}]🚨 Both --riverpod[-r] and --bloc[-b] flags were provided. Please use only one. ✨",
+        warning_x(
+            "Both --riverpod[-r] and --bloc[-b] flags were provided. Please use only one.",
         )
         sys.exit(1)
 
@@ -105,10 +98,8 @@ class SetupCommand:
         with_loading(task=lambda: create_fluttrflyrc(app_path=app_path))
 
         # step 9: provide navigation info
-        console.print(f"[{info_style}]ℹ️  Run: cd {app_name} && code . ✨")
-        console.print(
-            f"[{success_style}]✅ {state_management.capitalize()} project setup successfully! ✨"
-        )
+        info_x(message=f"Run: cd {app_name} && code .")
+        success_x(message=f"{state_management.capitalize()} project setup successfully!")
 
     def setup_riverpod(self):
         """Set up the Flutter project using Riverpod."""

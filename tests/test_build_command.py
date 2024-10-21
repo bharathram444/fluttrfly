@@ -9,7 +9,7 @@ from fluttrfly.bin.commands.build_command import BuildCommand
 from fluttrfly.bin.commands.global_variables import (
     console,
     error_style,
-    libString,
+    lib_string,
     warning_style,
 )
 
@@ -40,18 +40,18 @@ def test_build_module_tag_invalid_dir(mock_build_command, mocker):
 
     check_console_output(
         mock_console,
-        f"[{warning_style}]🚨 Incorrect directory: Please run this command from the 'lib' directory.",
+        f"[{warning_style}]🚨 Incorrect directory: Please run this command from the 'lib' directory. 😕",
     )
 
 
 def test_build_module_tag_invalid_module(mock_build_command, mocker):
-    mocker.patch('pathlib.Path.cwd', return_value=Path(f"/some/path{libString}"))
+    mocker.patch('pathlib.Path.cwd', return_value=Path(f"/some/path{lib_string}"))
     mock_console = mocker.patch.object(console, 'print')
 
     mock_build_command.build_module_tag(module="123")
 
     check_console_output(
-        mock_console, f"[{error_style}]📛 ModuleName argument must be a non-numeric string."
+        mock_console, f"[{error_style}]📛 ModuleName argument must be a non-numeric string. 😟"
     )
 
 
@@ -63,7 +63,7 @@ def test_build_assets_tag_already_exists(mock_build_command, mocker):
     mock_build_command.build_assets_tag()
 
     check_console_output(
-        mock_console, f"[{warning_style}]🚨 Assets structure already exists. No changes made."
+        mock_console, f"[{warning_style}]🚨 Assets structure already exists. No changes made. 😕"
     )
 
 
@@ -74,5 +74,5 @@ def test_build_core_tag_already_exists(mock_build_command, mocker):
     mock_build_command.build_core_tag()
 
     check_console_output(
-        mock_console, f"[{warning_style}]🚨 Core structure already exists. No changes made."
+        mock_console, f"[{warning_style}]🚨 Core structure already exists. No changes made. 😕"
     )

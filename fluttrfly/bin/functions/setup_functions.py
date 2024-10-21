@@ -13,13 +13,10 @@ import yaml
 from ..commands.global_variables import (
     config_path,
     console,
-    error_style,
     fluttrfly_version,
     info_style,
-    success_style,
-    warning_style,
 )
-from ..functions.common_functions import read_yaml, write_yaml
+from ..functions.common_functions import error_x, read_yaml, success_x, warning_x, write_yaml
 from ..functions.json_functions import read_config
 
 
@@ -60,9 +57,7 @@ def _select_platforms():
         if user_input.lower() == "y":
             selected_platforms.append(platform)
     if not selected_platforms:
-        console.print(
-            f"[{warning_style}]🚨 No platforms selected. Defaulting to 'android,ios'. 🚨"
-        )
+        warning_x(message="No platforms selected. Defaulting to 'android,ios'.")
         return "android,ios"
     return ",".join(selected_platforms)
 
@@ -74,19 +69,19 @@ def create_app():
     app_name = input("Enter the app name: ").strip()
     # Validate input
     if not org_name or not app_name:
-        console.print(f"[{error_style}]📛 Organization name and app name cannot be empty!")
+        error_x(message="Organization name and app name cannot be empty!")
         sys.exit(1)
     platforms = _select_platforms()
     # Step 2: Run 'flutter create' command with user inputs
     flutter_create_cmd = f"flutter create --org {org_name} --platforms {platforms} {app_name}"
     try:
         subprocess.run(flutter_create_cmd, shell=True, check=True)
-        console.print(f"[{success_style}]✅ Flutter project created successfully! ✨")
+        success_x(message="Flutter project created successfully!")
         # Step 3: Change directory to the newly created app
         os.chdir(app_name)
         return os.getcwd(), org_name, app_name, platforms
     except subprocess.CalledProcessError:
-        console.print(f"[{error_style}]📛 Failed to create Flutter project. 😟")
+        error_x(message="Failed to create Flutter project.")
         sys.exit(1)
         return None
 
@@ -104,7 +99,7 @@ def add_folders(state_management, app_path):
     shutil.copytree(lib_path, app_path_x / "lib", dirs_exist_ok=True)
     shutil.copytree(packages_path, app_path_x / "packages", dirs_exist_ok=True)
     shutil.copytree(test_path, app_path_x / "test", dirs_exist_ok=True)
-    console.print(f"[{success_style}]✅ assets, lib, packages, test added successfully! ✨")
+    success_x(message="assets, lib, packages, test added successfully!")
 
 
 def update_pubspec_yaml(file_path, state_management):
@@ -135,7 +130,7 @@ def update_pubspec_yaml(file_path, state_management):
 
     # Write the updated YAML data back to the pubspec.yaml
     write_yaml(file_path, data)
-    console.print(f"[{success_style}]✅ pubspec.yaml has been updated successfully! ✨")
+    success_x(message="pubspec.yaml has been updated successfully!")
 
 
 def update_local_keys(local_keys_path, org_name, app_name):
@@ -144,7 +139,7 @@ def update_local_keys(local_keys_path, org_name, app_name):
     # 0. Created Path and check exists
     local_keys_path_x = Path(local_keys_path)
     if not local_keys_path_x.exists():
-        console.print(f"[{warning_style}]🚨 local_keys.dart not found. 🚨"),
+        warning_x(message="local_keys.dart not found."),
     # 1. Read local keys file
     with (local_keys_path_x).open("r") as template_file:
         component_temp = template_file.read()
@@ -155,7 +150,7 @@ def update_local_keys(local_keys_path, org_name, app_name):
     # 3. Write to a new file
     with (local_keys_path_x).open("w") as new_file:
         new_file.write(component_temp)
-    console.print(f"[{success_style}]✅ local_keys.dart has been updated successfully! ✨")
+    success_x(message="local_keys.dart has been updated successfully!")
 
 
 def update_android_manifest(manifest_path):
@@ -188,7 +183,7 @@ def update_android_manifest(manifest_path):
     # Step 5: Write the updated file back to AndroidManifest.xml
     tree.write(manifest_path, encoding="utf-8", xml_declaration=True)
 
-    console.print(f"[{success_style}]✅ AndroidManifest.xml updated successfully! ✨")
+    success_x(message="AndroidManifest.xml updated successfully!")
 
 
 def update_info_plist(plist_path):
@@ -210,7 +205,7 @@ def update_info_plist(plist_path):
     with open(plist_path, 'wb') as plist_file:
         plistlib.dump(plist_data, plist_file)
 
-    console.print(f"[{success_style}]✅ Info.plist updated successfully! ✨")
+    success_x(message="Info.plist updated successfully!")
 
 
 def update_dependencies(state_management):
@@ -237,7 +232,7 @@ def update_dependencies(state_management):
     if dev_deps:
         dev_cmd = ['flutter', 'pub', 'add', '-d'] + dev_deps
         subprocess.run(dev_cmd, check=True)
-    console.print(f"[{success_style}]✅ Dependencies updated successfully! ✨")
+    success_x(message="Dependencies updated successfully!")
 
 
 def run_flutter_commands(app_path):
@@ -252,24 +247,24 @@ def run_flutter_commands(app_path):
     ]
     app_path_x = Path(app_path)
     # Run commands in the user app directory
-    console.print(f"[{success_style}]✅ Running Flutter commands in the user app... ✨")
+    success_x(message="Running Flutter commands in the user app...")
     for command in commands:
         try:
             subprocess.run(command, shell=True, check=True, cwd=app_path_x)
-            console.print(f"[{success_style}]✅ Executed: {command} ✨")
+            success_x(message=f"Executed: {command}")
         except subprocess.CalledProcessError as e:
-            console.print(f"[{error_style}]📛 Error while executing command '{command}': {e}")
+            error_x(message=f"Error while executing command '{command}': {e}")
 
     # Run commands in the packages/fluttrfly directory
-    console.print(f"[{success_style}]✅ Running Flutter commands in the packages/fluttrfly... ✨")
+    success_x(message="Running Flutter commands in the packages/fluttrfly...")
     fluttrfly_path = app_path_x / "packages/fluttrfly"
     for command in commands:
         try:
             subprocess.run(command, shell=True, check=True, cwd=fluttrfly_path)
-            console.print(f"[{success_style}]✅ Executed: {command} ✨")
+            success_x(message=f"Executed: {command}")
         except subprocess.CalledProcessError as e:
-            console.print(f"[{error_style}]📛 Error while executing command '{command}': {e}")
-    console.print(f"[{success_style}]✅ Flutter commands executed successfully! ✨")
+            error_x(message=f"Error while executing command '{command}': {e}")
+    success_x(message="Flutter commands executed successfully!")
 
 
 def create_fluttrflyrc(app_path):
@@ -287,9 +282,9 @@ def create_fluttrflyrc(app_path):
     try:
         with open(fluttrflyrc_path, 'w') as fluttrflyrc_file:
             json.dump(fluttrfly_data, fluttrflyrc_file, indent=4)
-        console.print(f"[{success_style}]✅ Created .fluttrflyrc file at: {fluttrflyrc_path}")
+        success_x(message=f"Created .fluttrflyrc file at: {fluttrflyrc_path}")
     except Exception as e:
-        console.print(f"[{error_style}]📛Error while creating .fluttrflyrc file: {e}")
+        error_x(message=f"📛Error while creating .fluttrflyrc file: {e}")
 
 
 def show_setup_command_lines():

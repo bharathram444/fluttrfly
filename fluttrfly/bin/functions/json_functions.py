@@ -6,12 +6,9 @@ from pathlib import Path
 from ..commands.global_variables import (
     config_path,
     console,
-    error_style,
     fluttrfly_version,
-    info_style,
-    success_style,
-    warning_style,
 )
+from ..functions.common_functions import error_x, info_x, success_x, warning_x
 
 
 def handle_exception(func):
@@ -19,16 +16,14 @@ def handle_exception(func):
         try:
             return func(*args, **kwargs)
         except (FileNotFoundError, IsADirectoryError) as e:
-            console.print(f"[{error_style}]📛 Error: {e} 😟")
-            console.print(
-                f"[{error_style}]📛 The configuration file is missing or the specified path is a directory. 😟"
+            error_x(message=f"Error: {e}")
+            error_x(
+                message="The configuration file is missing or the specified path is a directory."
             )
-            console.print(
-                f"[{error_style}]📛 Use 'fluttrfly env --force' to create the environment. 😟"
-            )
+            error_x(message="Use 'fluttrfly env --force' to create the environment.")
             return None
         except Exception as e:
-            console.print(f"[{error_style}]📛 Error: {e} 😟")
+            error_x(message=f"Error: {e}")
             return None
 
     return wrapper
@@ -87,20 +82,16 @@ def all_paths_get(config_path):
 def check_path_exists(path: str, silence, force_off):
     try:
         if path == "":
-            console.print(
-                f"[{error_style}]📛 Environment not set up. Run 'fluttrfly env' first. 😟"
-            )
+            error_x(message="Environment not set up. Run 'fluttrfly env' first.")
             return None
         if Path(path).exists():
             if not silence:
-                console.print(f"[{success_style}]✅ Path '{path}' exists. ✨")
+                success_x(message=f"Path '{path}' exists.")
             return True
         else:
-            console.print(f"[{error_style}]📛 Path '{path}' does not exist. 😟")
+            error_x(message=f"Path '{path}' does not exist.")
             if not force_off:
-                console.print(
-                    f"[{error_style}]📛 You have to set up env again using 'fluttrfly env --force' 😟"
-                )
+                error_x(message="You have to set up env again using 'fluttrfly env --force'")
             return False
     except Exception as e:
         print(f"Error checking path: {e}")
@@ -144,9 +135,7 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
                     "repo_url": "https://github.com/bharathram444/fluttrflyEnv.git",
                 },
             )
-            console.print(
-                f"[{error_style}]📛 Error setting up the environment. Please try again. 📛"
-            )
+            error_x(message="Error setting up the environment. Please try again.")
             sys.exit(1)
 
     write_config(
@@ -168,11 +157,11 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
 
     if main_repo_dir is not None:
         # Additional messages
-        console.print(f"[{success_style}]✅ Environment set up successfully! ✨")
-        console.print(
-            f"[{info_style}]ℹ️  The environment (v{env_version}) has been set up and linked to fluttrfly v{fluttrfly_version}. ℹ️"
+        success_x(message="Environment set up successfully!")
+        info_x(
+            message=f"The environment (v{env_version}) has been set up and linked to fluttrfly v{fluttrfly_version}."
         )
-        console.print(f"[{info_style}]✨ Paths linked to fluttrfly from the environment: ✨")
+        info_x(message="Paths linked to fluttrfly from the environment:")
         console.print(f"   • Repo Directory: {str(main_repo_dir)}")
         console.print(f"   • Environment : {str(main_repo_dir)}/env")
         console.print(f"   • Assets: {str(main_repo_dir)}/env/assets")
@@ -180,20 +169,12 @@ def add_paths_process_msg_display(main_repo_dir, check_out, env_version, repo_ur
         console.print(f"   • Fonts: {str(main_repo_dir)}/env/assets/fonts")
         console.print(f"   • Templates: {str(main_repo_dir)}/env/assets/templates")
         console.print(f"   • messages: {str(main_repo_dir)}/env/messages")
-        console.print(
-            f"[{warning_style}]🚨  Important: Do not modify the structure of the environment or move it! 🚨"
-        )
-        console.print(
-            f"[{warning_style}]🚨  Avoid moving or deleting folders within the environment. 🚨"
-        )
-        console.print(
-            f"[{warning_style}]🚨  Avoid changing branches manually within the environment. 🚨"
-        )
-        console.print(
-            f"[{warning_style}]🚨  Any unauthorized changes may lead to fluttrfly malfunction. 🚨"
-        )
-        console.print(
-            f"[{info_style}]✨ You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}! ✨"
+        warning_x(message="Important: Do not modify the structure of the environment or move it!")
+        warning_x(message="Avoid moving or deleting folders within the environment.")
+        warning_x(message="Avoid changing branches manually within the environment.")
+        warning_x(message="Any unauthorized changes may lead to fluttrfly malfunction.")
+        info_x(
+            message=f"You're all set! Happy coding with fluttrfly v{fluttrfly_version} and env v{env_version}!"
         )
 
 
@@ -224,12 +205,10 @@ def set_env_path():
         if real_repo_dir is None or not real_repo_dir:
             raise FileNotFoundError
     except FileNotFoundError:
-        console.print(
-            f"[{error_style}]📛 Path '{repo_dir}' does not exist. Please provide a valid path. 😟"
-        )
+        error_x(message=f"Path '{repo_dir}' does not exist. Please provide a valid path. 😟")
         return None
     except Exception as e:
-        console.print(f"[{error_style}]📛 An error occurred: {e} 😟")
+        error_x(message=f"An error occurred: {e}")
         return None
 
 
@@ -254,8 +233,6 @@ def paths_check_up(repo_dir):
     for path in paths:
         result = check_path_exists(path, silence=False, force_off=True)
         if result is None or not result:
-            console.print(
-                f"[{error_style}]📛 Please provide a valid path of fluttrflyenv. (or) 😟"
-            )
+            error_x(message="Please provide a valid path of fluttrflyenv. (or)")
             return False
     return True

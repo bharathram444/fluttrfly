@@ -3,10 +3,7 @@ from pathlib import Path
 
 from ..commands.global_variables import (
     config_path,
-    console,
-    error_style,
-    libString,
-    warning_style,
+    lib_string,
 )
 from ..functions.build_functions import (
     show_build_command_lines,
@@ -14,7 +11,7 @@ from ..functions.build_functions import (
     to_create_core_structure,
     to_create_module_structure,
 )
-from ..functions.common_functions import with_loading
+from ..functions.common_functions import error_x, warning_x, with_loading
 from ..functions.env_functions import env_check_up
 from ..functions.json_functions import load
 
@@ -31,8 +28,8 @@ class BuildCommand:
         ) = load(config_path=config_path)
         # Check if the environment is set up
         if not self.environment_setup_done:
-            console.print(
-                f"[{error_style}]📛 Environment not set up. Run 'fluttrfly env' first. 😟",
+            error_x(
+                "Environment not set up. Run 'fluttrfly env' first.",
             )
             sys.exit(1)
         env_check_up(repo_dir=self.repo_dir, env_version=self.env_version, silence=True)
@@ -43,30 +40,30 @@ class BuildCommand:
 
     def build_module_tag(self, module):
         if not module.isdigit():
-            if libString in Path.cwd().as_posix():
+            if lib_string in Path.cwd().as_posix():
                 with_loading(task=lambda: to_create_module_structure(module))
             else:
-                console.print(
-                    f"[{warning_style}]🚨 Incorrect directory: Please run this command from the 'lib' directory.",
+                warning_x(
+                    message="Incorrect directory: Please run this command from the 'lib' directory.",
                 )
         else:
-            console.print(
-                f"[{error_style}]📛 ModuleName argument must be a non-numeric string.",
+            error_x(
+                message="ModuleName argument must be a non-numeric string.",
             )
-            if libString not in Path.cwd().as_posix():
-                console.print(
-                    f"[{warning_style}]🚨 Incorrect directory: Please run this command from the 'lib' directory.",
+            if lib_string not in Path.cwd().as_posix():
+                warning_x(
+                    message="Incorrect directory: Please run this command from the 'lib' directory.",
                 )
 
     def build_assets_tag(self):
-        if libString in Path.cwd().as_posix():
-            console.print(
-                f"[{warning_style}]🚨 Incorrect directory: Please run this command outside the 'lib' directory.",
+        if lib_string in Path.cwd().as_posix():
+            warning_x(
+                message="Incorrect directory: Please run this command outside the 'lib' directory.",
             )
             sys.exit(1)
         elif (Path.cwd() / 'assets').exists():
-            console.print(
-                f"[{warning_style}]🚨 Assets structure already exists. No changes made.",
+            warning_x(
+                message="Assets structure already exists. No changes made.",
             )
 
         else:
@@ -74,13 +71,13 @@ class BuildCommand:
 
     def build_core_tag(self):
         if (Path.cwd() / 'core').exists():
-            console.print(
-                f"[{warning_style}]🚨 Core structure already exists. No changes made.",
+            warning_x(
+                message="Core structure already exists. No changes made.",
             )
         elif "/lib" in Path.cwd().as_posix():
             to_create_core_structure()
         else:
-            console.print(
-                f"[{warning_style}]🚨 Incorrect directory: Please run this command from the 'lib' directory.",
+            warning_x(
+                message="Incorrect directory: Please run this command from the 'lib' directory.",
             )
             sys.exit(1)

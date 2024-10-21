@@ -17,7 +17,7 @@ fluttrfly_version = metadata.version("fluttrfly")
 console = Console()
 
 # consts
-libString = "/lib"
+lib_string = "/lib"
 
 # Define styles for messages
 error_style = Style(color="red", bold=True)
