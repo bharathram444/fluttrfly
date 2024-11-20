@@ -267,12 +267,13 @@ def run_flutter_commands(app_path):
     success_x(message="Flutter commands executed successfully!")
 
 
-def create_fluttrflyrc(app_path):
+def create_fluttrflyrc(app_path, state_management):
     """
     Create a .fluttrflyrc file in the user app directory with specified data.
     """
     # Define the data to be stored in the .fluttrflyrc file
-    fluttrfly_data = {"state_management": "r", "fluttrfly_version": fluttrfly_version}
+    key = "r" if state_management == "riverpod" else "b"
+    fluttrfly_data = {"state_management": key, "fluttrfly_version": fluttrfly_version}
     app_path_x = Path(app_path)
 
     # Define the path to the .fluttrflyrc file

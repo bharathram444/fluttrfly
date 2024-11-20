@@ -95,7 +95,9 @@ class SetupCommand:
         with_loading(task=lambda: run_flutter_commands(app_path=app_path), status='Running')
 
         # step 8: create .fluttrflyrc in user app
-        with_loading(task=lambda: create_fluttrflyrc(app_path=app_path))
+        with_loading(
+            task=lambda: create_fluttrflyrc(app_path=app_path, state_management=state_management)
+        )
 
         # step 9: provide navigation info
         info_x(message=f"Run: cd {app_name} && code .")

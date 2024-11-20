@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file. The format 
 #### Added
 
 - New feature or command (e.g., `fluttrfly add`) for adding widgets and utilities to the core.
+### Version 2.0.4 (2024-11-20)
+
+#### Added
+- Bug Fix in `create_fluttrflyrc` function:
+  - Here we hard coded this state_management like "r" now we changed this calling or  passing state_management field form `_setup_project` function.
 
 ### Version 2.0.3 (2024-10-21)
 
